@@ -527,16 +527,23 @@ public class Solution {
         return k==s.length()? true:false;
     }
 
+    //https://leetcode.com/problems/count-sorted-vowel-strings
+    //https://leetcode.com/problems/count-sorted-vowel-strings/discuss/1459936/100-Faster 
+    // see the pattern and you will find dp[j] = dp[j - 1] + dp[j];
+    //CompetativeProgrammingPractice\src\problem_statements\images
     public static int kc=0;
     public static void countVowelString(){
         String vowels[] = "aeiou".split("");
         System.out.println(Arrays.toString(vowels));
-        countVowelString(2,"","aeiou",0);
+        countVowelString(568,"","aeiou",0);
         System.out.println(kc);
     }
-    public static void countVowelString(int n,String a,String b,int k){
-        
-        if(k==n) { kc++;System.out.println(a); return; }
+    public static void countVowelString(int n,String a,String b,int k){ 
+        if(k==n) { 
+        	kc++;
+        	System.out.println(a); 
+        	return; 
+        }
         for(int i=0;i<b.length();i++){
             String aN = a+b.charAt(i);
             String bN=b.substring(i, b.length());
@@ -544,5 +551,6 @@ public class Solution {
         }
         
     }
+
 
 }
