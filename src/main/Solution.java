@@ -12,11 +12,13 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
 import structures.MyQueue;
 import structures.node;
+import structures.pair;
 
 public class Solution {
     // public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -29,7 +31,7 @@ public class Solution {
         	System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
-            countVowelString();
+            removeDuplicates();
             br.close();
             bw.close();
         }catch(Exception e){
@@ -550,6 +552,88 @@ public class Solution {
             countVowelString(n,aN,bN,k+1);
         }
         
+    }
+
+
+    //https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/
+    public static void removeDuplicates() throws NumberFormatException, IOException{
+        String s,result;
+        int k;
+
+        int n = Integer.parseInt(br.readLine().trim());
+        for(int i=0;i<n;i++){
+            s = br.readLine().trim();
+            s = s.substring(1,s.length()-1);
+            k = Integer.parseInt(br.readLine().trim());
+
+            result = removeDuplicates(s, k);
+            bw.write(result);
+            bw.write("\n");
+        }
+    }    
+    public static String removeDuplicatesUnoptimised(String s,int k){
+        String tempString = "";
+        // int startIndex = 0;
+        boolean flag = true;
+
+        int l=0;
+        int r=0;
+
+
+        while (flag){
+            flag = false;
+            l = 0;
+            r = 0;
+
+            while(r<s.length()){
+                //check if l and r diff = k
+                if(r-l == k){
+                    l=r;
+                    flag=true;
+                }
+
+                //if l != r then move l to r and add to string 
+                if(s.charAt(l)!=s.charAt(r)){
+                    tempString+=s.substring(l, r);
+                    l=r;
+                }
+
+                r++;
+            }
+
+            if(l<r && (r-l!=k) )
+                tempString+=s.substring(l, r);
+
+            s = tempString;
+            tempString = "";
+            System.out.println(s);
+        }
+        
+        return s;
+    }
+    public static String removeDuplicates(String s,int k){
+        Stack<pair> stack = new Stack<>();
+        
+        //use a stack to push characters and if the top k items are same then start popping
+        //store data in [char,count] way in stack to make the popping operation easier 
+        for(int i=0;i<s.length();i++){
+            char c = s.charAt(i);
+            if(!stack.isEmpty() && stack.peek().ch == c )
+                stack.peek().count += 1;
+            else
+                stack.push(new pair(c,1));
+            while(!stack.isEmpty() && stack.peek().count == k)
+                stack.pop();
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()){
+            pair p = stack.pop();
+            for(int j=0;j<p.count;j++){
+                sb.append(p.ch);
+            }
+        }
+        return sb.reverse().toString();
     }
 
 
