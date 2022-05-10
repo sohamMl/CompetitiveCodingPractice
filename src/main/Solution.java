@@ -16,6 +16,7 @@ import java.util.Stack;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
+import structures.ListNode;
 import structures.MyQueue;
 import structures.node;
 import structures.pair;
@@ -635,6 +636,97 @@ public class Solution {
         }
         return sb.reverse().toString();
     }
+
+    
+    //https://leetcode.com/problems/add-two-numbers/
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        int res=0;
+        boolean carryOver=false;
+        ListNode head = new ListNode();
+        ListNode currentNode = head;
+        while(l1 !=null || l2 != null || carryOver){
+            res=0;
+            if(carryOver) res = 1;
+            
+            if(l1 != null && l2 != null){
+                res += l1.val + l2.val;
+                if(res>9) carryOver = true;
+                else carryOver = false;
+                res = res % 10;
+                
+                l1 = l1.next;
+                l2 = l2.next;
+            }else if(l1 == null && l2 == null){
+                res = 1;
+                carryOver = false;
+            }else if(l1 == null ){
+                res += l2.val;
+                if(res>9) carryOver = true;
+                else carryOver = false;
+                res = res % 10;
+                l2 = l2.next;
+            }
+            else{
+                res += l1.val;
+                if(res>9) carryOver = true;
+                else carryOver = false;
+                res = res % 10;
+                l1 = l1.next;
+            }
+            
+           
+            
+            if(currentNode == head){
+                head.val = res;
+                head.next = new ListNode(res);
+                currentNode = head.next;
+            }
+            else{
+                currentNode.next = new ListNode(res);
+                currentNode = currentNode.next;
+            }
+                
+        }
+        
+        return head.next;
+    }
+    //not mine
+    public ListNode addTwoNumbersBetterSolution(ListNode l1, ListNode l2) {
+
+    	 ListNode dummy = new ListNode();
+    	 ListNode temp = dummy;
+    	 int carry = 0 ;
+    	 
+    	 
+    	 while(l1!=null || l2!=null || carry==1)
+    	 {
+    	     int sum=0;
+    	     
+    	     if(l1!=null)
+    	     {
+    	         sum+=l1.val;
+    	         l1=l1.next;
+    	     }
+    	     
+    	     if(l2!=null)
+    	     {
+    	         sum+=l2.val;
+    	         l2=l2.next;
+    	     }
+    	     
+    	     
+    	     sum+=carry;
+    	     carry = sum/10;
+    	     ListNode node = new ListNode(sum%10);
+    	     temp.next=node;
+    	     temp=temp.next;
+    	 }
+
+    	return dummy.next;
+
+    }
+    
+    
 
 
 }
