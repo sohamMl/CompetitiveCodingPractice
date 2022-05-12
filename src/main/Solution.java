@@ -32,7 +32,7 @@ public class Solution {
         	System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
-            removeDuplicates();
+            generateParenthesis();
             br.close();
             bw.close();
         }catch(Exception e){
@@ -727,6 +727,35 @@ public class Solution {
     }
     
     
-
-
+    //https://leetcode.com/problems/generate-parentheses/submissions/
+    public static void generateParenthesis() {
+    	int n=16;
+    	ArrayList<String> list = new ArrayList<>();
+    	generateParenthesis("",n,n,list);
+    	System.out.println(list.size());
+    	
+    }
+    public static void generateParenthesis(String str,int l, int r, ArrayList<String> list) {
+    	//if count ( and ) = 0 return string
+    	if(l==0 && r==0) {
+    		//System.out.println(str);
+    		list.add(str);
+    		return;
+    	} 
+    	
+    	// count ( = 0  then just add ) and reduce count of ) 
+    	else if (l==0) {
+    		generateParenthesis(str+")",l,r-1,list);
+    	}
+    	//if count of ( and ) is greater than 0 then
+    	//recurse by one adding ( or one adding ) and reducing count
+    	// count (  < count )
+    	else {
+    		generateParenthesis(str+"(", l-1, r,list);
+    		if(l<r)
+    			generateParenthesis(str+")", l, r-1,list);
+    	}
+    }
+    
+    
 }
