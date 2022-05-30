@@ -32,7 +32,7 @@ public class Solution {
         	System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
-            generateParenthesis();
+            controlRobot();
             br.close();
             bw.close();
         }catch(Exception e){
@@ -755,6 +755,11 @@ public class Solution {
     		if(l<r)
     			generateParenthesis(str+")", l, r-1,list);
     	}
+    }
+    
+    
+    public static void controlRobot() {
+    	System.out.println("hello");
     }
     
     
