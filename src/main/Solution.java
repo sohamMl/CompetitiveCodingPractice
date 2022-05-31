@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import structures.ListNode;
 import structures.MyQueue;
+import structures.Robot;
 import structures.node;
 import structures.pair;
 
@@ -757,9 +758,54 @@ public class Solution {
     	}
     }
     
-    
+    //https://leetcode.com/problems/walking-robot-simulation-ii/submissions/
+    //my solution is faster - very weird 
     public static void controlRobot() {
-    	System.out.println("hello");
+    	Robot robot = new Robot(4,5);
+    	robot.step(44);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(19);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(8);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(36);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(17);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(49);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(14);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(40);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(18);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(7);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(8);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(5);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(2);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(36);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	robot.step(22);
+    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	
+    	
+//    	robot = new Robot(6,3);
+//    	robot.step(2);
+//    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+//    	robot.step(2);
+//    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+//    	robot.step(2);
+//    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+//    	robot.step(1);
+//    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+//    	robot.step(4);
+//    	System.out.println(Arrays.toString(robot.getPos())+"   "+robot.getDir());
+    	
     }
     
     
