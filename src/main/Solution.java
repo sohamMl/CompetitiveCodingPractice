@@ -30,10 +30,10 @@ public class Solution {
     // ~~~~~~~~~~~~~ MAIN METHOD ~~~~~~~~~~~~~
     public static void main(String[] args) {
         try{
-        	System.out.println(System.getProperty("user.dir"));
+//        	System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
-            controlRobot();
+            intToRoman();
             br.close();
             bw.close();
         }catch(Exception e){
@@ -533,7 +533,7 @@ public class Solution {
 
     //https://leetcode.com/problems/count-sorted-vowel-strings
     //https://leetcode.com/problems/count-sorted-vowel-strings/discuss/1459936/100-Faster 
-    // see the pattern and you will find dp[j] = dp[j - 1] + dp[j];
+    //see the pattern and you will find dp[j] = dp[j - 1] + dp[j];
     //CompetativeProgrammingPractice\src\problem_statements\images
     public static int kc=0;
     public static void countVowelString(){
@@ -809,4 +809,84 @@ public class Solution {
     }
     
     
+    public static void lengthOfLongestSubstring() {
+    	String s="abcabcbb";
+    	int answer = lengthOfLongestSubstring(s);
+    	System.out.println(answer);
+    }
+
+	private static int lengthOfLongestSubstring(String s) {
+        
+		int maxLength = 0;
+        if(s.length() == 1) return 1;
+        
+		HashSet<Character> currentStatus = new HashSet<>();
+		for(int i=0;i<s.length();i++) {
+			// reset the character tracker
+			currentStatus.clear();
+			
+			currentStatus.add(s.charAt(i));
+			
+			for(int j=i+1;j<s.length();j++) {
+				
+				char ch = s.charAt(j);
+				if(currentStatus.contains(ch)) {
+					int uniqueLength = j-i;
+					if(uniqueLength > maxLength)
+						maxLength = uniqueLength;
+					break;
+				}else{
+					currentStatus.add(ch);
+                    if(j==s.length()-1) {
+                        int uniqueLength = s.length()-i;
+					    if(uniqueLength > maxLength)
+						    maxLength = uniqueLength;
+                    }
+                }
+			}
+		}
+		
+		return maxLength;
+	}
+    
+	
+	//https://leetcode.com/problems/integer-to-roman/submissions/
+    public static void intToRoman() {
+    	int num = 3765;
+    	String roman = intToRomanElegant(num);
+    	
+    	System.out.println(roman);
+    }
+    
+    public static String intToRoman(int num) {
+    	StringBuilder roman = new StringBuilder();
+    	
+    	Map<Integer,String> symbols = new HashMap<>();
+    	String[] nums = "1 2 3 4 5 6 7 8 9 10 20 30 40 50 60 70 80 90 100 200 300 400 500 600 700 800 900 1000 2000 3000".split(" ");
+    	String[] romans = "I II III IV V VI VII VIII IX X XX XXX XL L LX LXX LXXX XC C CC CCC CD D DC DCC DCCC CM M MM MMM".split(" ");
+    	
+    	for(int i=0;i<nums.length;i++)
+    		symbols.put(Integer.parseInt(nums[i]), romans[i]);
+    	
+    	int place = 1000;
+    	
+    	while(place>0) {
+    		int digit = num / place;
+    		roman.append(symbols.get(digit*place) == null? "":symbols.get(digit*place));
+    		num %= place;
+    		place /= 10;
+    	}
+    	
+    	return roman.toString();
+    }
+    
+    //from discussion
+    public static String intToRomanElegant(int num) {
+    	String ones[] = {"","I","II","III","IV","V","VI","VII","VIII","IX"};
+        String tens[] = {"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC"};
+        String hrns[] = {"","C","CC","CCC","CD","D","DC","DCC","DCCC","CM"};
+        String ths[]={"","M","MM","MMM"};
+        
+        return ths[num/1000] + hrns[(num%1000)/100] + tens[(num%100)/10] + ones[num%10];
+    }
 }
