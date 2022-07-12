@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
+import java.time.Duration;
+import java.time.LocalTime;
 
 import structures.ListNode;
 import structures.MyQueue;
@@ -33,7 +35,14 @@ public class Solution {
 //        	System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
-            intToRoman();
+            LocalTime start = LocalTime.now();
+            divide();
+            LocalTime end = LocalTime.now();
+            
+            System.out.println("=========================");
+            System.out.println(((float)Duration.between(start, end).toMillis()/1000)+"s");
+            System.out.println("=========================");
+            
             br.close();
             bw.close();
         }catch(Exception e){
@@ -889,4 +898,89 @@ public class Solution {
         
         return ths[num/1000] + hrns[(num%1000)/100] + tens[(num%100)/10] + ones[num%10];
     }
+    
+    
+    //https://leetcode.com/problems/divide-two-integers/submissions/
+    public static void divide() {
+    	int dividend = Integer.MIN_VALUE;
+    	int divisor = -1;
+    	
+//    	int answer = divide(dividend,divisor);
+    	int answer = divide_eff(dividend,divisor);
+    	
+    	System.out.println(answer);
+    }
+    
+    public static int divide(int dividend, int divisor) {
+        
+        long dt = dividend, d = divisor, q=0;
+        
+        boolean pos = true;
+        if((dividend<0 && divisor>0)||(dividend>0 && divisor<0))
+            pos=false;
+        
+        if(dividend<0) dt=-dt;
+        if(divisor<0) d=-d;
+        
+      
+       if(d==1) q = pos ? dt : -dt;
+       else if(dt==d)
+    	   return pos ? 1 : -1;
+       else {
+        while(dt>=d){
+            dt-=d;
+            
+            if(pos) q++;
+            else q--;
+        }
+       }
+        
+        int qoutient = 0;
+        
+        if(q>Integer.MAX_VALUE)
+            qoutient=Integer.MAX_VALUE;
+        else if(q<Integer.MIN_VALUE)
+            qoutient=Integer.MIN_VALUE;
+        else
+            qoutient=(int)q;
+        
+        return qoutient;
+    }
+    
+
+    public static int divide_eff(int dividend, int divisor) {
+    	
+    	boolean isPos = (dividend<0) ^ (divisor<0)? false : true;
+    	
+    	long dt = dividend;
+    	long d = divisor;
+    	
+    	if(dt<0) dt=-dt;
+    	if(d<0) d=-d;
+    	
+    	long q = 0,t=dt;
+    	
+    	for(int i=31;i>=0;i--) {
+    		
+    		//this gets the most significant bit of the qoutient
+    		//for the remaining dividend
+    		if(d<<i <= t) {
+    			
+    			//getting value from the significant bit
+    			if(isPos) q+=1L<<i; 
+    			else q-=1L<<i;
+    			
+    			//updating the current dividend value
+    			t-=d<<i;
+    		}
+    	}
+    	
+    	
+    	if(q>Integer.MAX_VALUE) return Integer.MAX_VALUE;
+    	
+    	if(q<Integer.MIN_VALUE) return Integer.MIN_VALUE;
+    	
+    	return (int)q;
+    }
+
 }
