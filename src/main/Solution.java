@@ -28,20 +28,36 @@ public class Solution {
     // public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     public static BufferedReader br;
     public static BufferedWriter bw;
+    public static LocalTime start;
+    public static LocalTime end;
     
+    public static void setStartTime() {
+    	start = LocalTime.now();
+    }
+    
+    public static void setEndTime() {
+    	end = LocalTime.now();
+    }
+    
+    public static void showTimeTaken() {
+    	System.out.println("=========================");
+        System.out.println(((float)Duration.between(start, end).toMillis()/1000)+"s");
+        System.out.println("=========================");
+    }
+    
+    public static void showTimeTaken(String msg) {
+    	System.out.println("=========================");
+        System.out.println(msg+"\n"+((float)Duration.between(start, end).toMillis()/1000)+"s");
+        System.out.println("=========================");
+    }
     // ~~~~~~~~~~~~~ MAIN METHOD ~~~~~~~~~~~~~
     public static void main(String[] args) {
         try{
 //        	System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
-            LocalTime start = LocalTime.now();
-            divide();
-            LocalTime end = LocalTime.now();
             
-            System.out.println("=========================");
-            System.out.println(((float)Duration.between(start, end).toMillis()/1000)+"s");
-            System.out.println("=========================");
+            search();
             
             br.close();
             bw.close();
@@ -903,7 +919,7 @@ public class Solution {
     //https://leetcode.com/problems/divide-two-integers/submissions/
     public static void divide() {
     	int dividend = Integer.MIN_VALUE;
-    	int divisor = -1;
+    	int divisor = 1;
     	
 //    	int answer = divide(dividend,divisor);
     	int answer = divide_eff(dividend,divisor);
@@ -947,7 +963,6 @@ public class Solution {
         return qoutient;
     }
     
-
     public static int divide_eff(int dividend, int divisor) {
     	
     	boolean isPos = (dividend<0) ^ (divisor<0)? false : true;
@@ -983,4 +998,121 @@ public class Solution {
     	return (int)q;
     }
 
+    
+    //https://leetcode.com/problems/container-with-most-water/
+    public static void maxArea() throws NumberFormatException, IOException {
+    	int inputs = Integer.parseInt(br.readLine());
+    	for(int i=0;i<inputs;i++) {
+    		
+    		setStartTime();
+    		int[] heights = Stream.of(br.readLine().split(",")).mapToInt(Integer::parseInt).toArray();
+    		setEndTime();
+    		showTimeTaken("For reading input - ");
+    		
+    		setStartTime();
+    		int area = maxAreaEff(heights);
+    		setEndTime();
+    		
+    		System.out.println(area);
+    		showTimeTaken("For method execution - ");
+    	}
+    }
+    
+    
+    public static int maxArea(int[] height) {
+    	int max=0,l,r,area;
+        
+        for(int i=0;i<height.length;i++){
+            for(int j=i+1;j<height.length;j++){
+                l=height[i];
+                r=height[j];
+                
+                area = l<r ? l*(j-i) : r*(j-i);
+                
+                if(area>max) max = area;
+            }
+        }
+        
+        return max;
+    	
+    }
+    
+    
+    public static int maxAreaEff(int[] height) {
+    	int max=0,i=0,j=height.length-1,area,l,r;
+    	
+    	while(i<j) {
+    		l = height[i];
+    		r = height[j];
+    		area = l<r ? l*(j-i) : r*(j-i);
+    		
+    		if(area>max) max = area;
+    		
+    		if(l<r) i++;
+    		else j--;
+    	}
+    	
+    	return max;
+    }
+    
+    
+    
+    //https://leetcode.com/problems/search-in-rotated-sorted-array/
+    public static void search() {
+    	int[] nums = {4,5,6,7,0,1,2};
+    	int target = 1;
+    	
+    	int index = search(nums,target);
+    	System.out.println(index);
+    }
+    
+    public static int search(int[] nums, int target) {
+    	int l,r,m;
+    	//find pivot point 
+    	l=0;
+    	r=nums.length-1;
+    	m=(l+r)/2;
+    	
+    	if(nums[0]>nums[nums.length-1]) {
+    		while(!(nums[m]<nums[m-1] && nums[m]<nums[l+1])) {
+    			if(nums[m]>nums[r]) l=m+1;  //selecting the right half
+    			else r=m-1;  //selecting the left half		
+    			m=(l+r)/2;
+    		}
+    	}
+    	
+    	
+    	//then apply binary search on the right or left side of pivot point
+    	if(target==nums[m]) return m;
+    	
+    	if(target<nums[m] || target>nums[m-1]) return -1;
+    	
+    	if(nums[0]<=target && target<=nums[m-1]) {
+    		l=0;
+    		r=m-1;
+    	}
+    	
+    	if(nums[m+1]<=target && target<=nums[nums.length-1]) {
+    		l=m+1;
+    		r=nums.length-1;
+    	}
+    	
+    	m=(l+r)/2;
+    	
+    	if(nums[0]>nums[nums.length-1]) {
+    		while(l<=r) {
+    			if(target == nums[m]) return m;
+    			
+    			if (target < nums[m]) r=m-1;
+    			else l=m+1;
+    			m=(l+r)/2;
+    		}
+    	}
+    	
+    	return -1;
+    }
+    
+    
+    
+    
 }
