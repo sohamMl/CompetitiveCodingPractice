@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +25,8 @@ import structures.MyQueue;
 import structures.Robot;
 import structures.node;
 import structures.pair;
+
+
 
 public class Solution {
     // public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -56,12 +60,13 @@ public class Solution {
 //        	System.out.println(System.getProperty("user.dir"));
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
-            
-            search();
+
+            groupAnagrams();
             
             br.close();
             bw.close();
         }catch(Exception e){
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }      
     }
@@ -76,7 +81,7 @@ public class Solution {
             whatFlavors(cost,money);
         }
     }
-    public static void whatFlavors(List<Integer> cost,int money){
+    public static void whatFlavors(List<Integer> cost, int money){
         Map<Integer,Integer> map = new HashMap<>();
         int size = cost.size();
         for(int i=0;i<size;i++){
@@ -119,7 +124,7 @@ public class Solution {
         if(n.right!=null)
             inorder(n.right,list);
     }
-    public static void depth_calc(node n,ArrayList<Integer> depth[],int index){
+    public static void depth_calc(node n, ArrayList<Integer> depth[], int index){
         depth[index].add(n.value);
         if(n.left!=null)
             depth_calc(n.left, depth, index+1);
@@ -1111,8 +1116,32 @@ public class Solution {
     	
     	return -1;
     }
-    
-    
+
+
+    //https://leetcode.com/problems/group-anagrams/description/
+    public static void groupAnagrams() {
+        String[] strs = {"cab","tin","pew","duh","may","ill","buy","bar","max","doc"};
+        System.out.println(groupAnagrams(strs));
+    }
+    public static String sortedWord(String word) {
+        char[] ar = word.toCharArray();
+        Arrays.sort(ar);
+        return String.valueOf(ar);
+    }
+
+    public static List<List<String>> groupAnagrams(String[] strs) {
+        Map<String,List<String>> anagramMap= new HashMap<>();
+        for(String word: strs) {
+            String wordHash = sortedWord(word);
+            if (anagramMap.containsKey(wordHash)) anagramMap.get(wordHash).add(word);
+            else {
+                anagramMap.put(wordHash, new ArrayList<String>());
+                anagramMap.get(wordHash).add(word);
+            }
+        }
+
+        return new ArrayList<>(anagramMap.values());
+    }
     
     
 }
