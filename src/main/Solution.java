@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.time.Duration;
@@ -61,7 +62,10 @@ public class Solution {
             br = new BufferedReader(new FileReader("src/resources/data.txt"));
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
-            groupAnagrams();
+            setStartTime();
+            longestPalindrome();
+            setEndTime();
+            showTimeTaken("Total time taken : ");
             
             br.close();
             bw.close();
@@ -1142,6 +1146,101 @@ public class Solution {
 
         return new ArrayList<>(anagramMap.values());
     }
-    
+
+
+    //https://leetcode.com/problems/longest-palindromic-substring/
+    // this is can be further improved with Manacher's algorithm
+    public static void longestPalindrome() {
+        String word;
+        word = "rirfadyqgztixemwswtcctwsdfnchcovrmiooffbbijkecuvlvukecutasfxqcqygltrogrdxlrslbnzktlanycgtniprjlospzhhgdrqcwlukbpsrumxguskubokxcmswjnssbkutdhppsdckuckcbwbxpmcmdicfjxaanoxndlfpqwneytatcbyjmimyawevmgirunvmdvxwdjbiqszwhfhjmrpexfwrbzkipxfowcbqjckaotmmgkrbjvhihgwuszdrdiijkgjoljjdubcbowvxslctleblfmdzmvdkqdxtiylabrwaccikkpnpsgcotxoggdydqnuogmxttcycjorzrtwtcchxrbbknfmxnonbhgbjjypqhbftceduxgrnaswtbytrhuiqnxkivevhprcvhggugrmmxolvfzwadlnzdwbtqbaveoongezoymdrhywxcxvggsewsxckucmncbrljskgsgtehortuvbtrsfisyewchxlmxqccoplhlzwutoqoctgfnrzhqctxaqacmirrqdwsbdpqttmyrmxxawgtjzqjgffqwlxqxwxrkgtzqkgdulbxmfcvxcwoswystiyittdjaqvaijwscqobqlhskhvoktksvmguzfankdigqlegrxxqpoitdtykfltohnzrcgmlnhddcfmawiriiiblwrttveedkxzzagdzpwvriuctvtrvdpqzcdnrkgcnpwjlraaaaskgguxzljktqvzzmruqqslutiipladbcxdwxhmvevsjrdkhdpxcyjkidkoznuagshnvccnkyeflpyjzlcbmhbytxnfzcrnmkyknbmtzwtaceajmnuyjblmdlbjdjxctvqcoqkbaszvrqvjgzdqpvmucerumskjrwhywjkwgligkectzboqbanrsvynxscpxqxtqhthdytfvhzjdcxgckvgfbldsfzxqdozxicrwqyprgnadfxsionkzzegmeynyee";
+        word = "reifadyqgztixemwswtccodfnchcovrmiooffbbijkecuvlvukecutasfxqcqygltrogrdxlrslbnzktlanycgtniprjlospzhhgdrqcwlukbpsrumxguskubokxcmswjnssbkutdhppsdckuckcbwbxpmcmdicfjxaanoxndlfpqwneytatcbyjmimyawevmgirunvmdvxwdjbiqszwhfhjmrpexfwrbzkipxfowcbqjckaotmmgkrbjvhihgwuszdrdiijkgjoljjdubcbowvxslctleblfmdzmvdkqdxtiylabrwaccikkpnpsgcotxoggdydqnuogmxttcycjorzrtwtcchxrbbknfmxnonbhgbjjypqhbftceduxgrnaswtbytrhuiqnxkivevhprcvhggugrmmxolvfzwadlnzdwbtqbaveoongezoymdrhywxcxvggsewsxckucmncbrljskgsgtehortuvbtrsfisyewchxlmxqccoplhlzwutoqoctgfnrzhqctxaqacmirrqdwsbdpqttmyrmxxawgtjzqjgffqwlxqxwxrkgtzqkgdulbxmfcvxcwoswystiyittdjaqvaijwscqobqlhskhvoktksvmguzfankdigqlegrxxqpoitdtykfltohnzrcgmlnhddcfmawiriiiblwrttveedkxzzagdzpwvriuctvtrvdpqzcdnrkgcnpwjlraaaaskgguxzljktqvzzmruqqslutiipladbcxdwxhmvevsjrdkhdpxcyjkidkoznuagshnvccnkyeflpyjzlcbmhbytxnfzcrnmkyknbmtzwtaceajmnuyjblmdlbjdjxctvqcoqkbaszvrqvjgzdqpvmucerumskjrwhywjkwgligkectzboqbanrsvynxscpxqxtqhthdytfvhzjdcxgckvgfbldsfzxqdozxicrwqyprgnadfxsionkzzegmeynye";
+        word = "bananas";
+        word = "aaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzzzzzzzyyyyyyyyyyxxxxxxxxxxwwwwwwwwwwvvvvvvvvvvuuuuuuuuuuttttttttttssssssssssrrrrrrrrrrqqqqqqqqqqppppppppppoooooooooonnnnnnnnnnmmmmmmmmmmllllllllllkkkkkkkkkkjjjjjjjjjjiiiiiiiiiihhhhhhhhhhggggggggggffffffffffeeeeeeeeeeddddddddddccccccccccbbbbbbbbbbaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffgggggggggghhhhhhhhhhiiiiiiiiiijjjjjjjjjjkkkkkkkkkkllllllllllmmmmmmmmmmnnnnnnnnnnooooooooooppppppppppqqqqqqqqqqrrrrrrrrrrssssssssssttttttttttuuuuuuuuuuvvvvvvvvvvwwwwwwwwwwxxxxxxxxxxyyyyyyyyyyzzzzzzzzzzyyyyyyyyyyxxxxxxxxxxwwwwwwwwwwvvvvvvvvvvuuuuuuuuuuttttttttttssssssssssrrrrrrrrrrqqqqqqqqqqppppppppppoooooooooonnnnnnnnnnmmmmmmmmmmllllllllllkkkkkkkkkkjjjjjjjjjjiiiiiiiiiihhhhhhhhhhggggggggggffffffffffeeeeeeeeeeddddddddddccccccccccbbbbbbbbbbaaaa";
+        System.out.println(longestPalindrome(word));
+        System.out.println(longestPalindrome2(word));
+    }
+
+    public static boolean palindromCheck(String word) {
+        for (int i=0,j=word.length()-1;i<word.length()/2;i++,j--) {
+            if (word.charAt(i)!=word.charAt(j)) return false;
+        }
+        return true;
+    }
+
+    public static boolean palindromCheck(char[] ar, int start, int end) {
+        for(int i=start;i<=end;i++) System.out.print(ar[i]);
+        while(start<end) {
+            if (ar[start]!=ar[end]) {
+                System.out.println();
+                return false;
+            }
+            start++; end--;
+        }
+        System.out.println("---");
+        return true;
+    }
+
+    public static String longestPalindrome(String word) {
+        for(int k=word.length();k>0;k--) {
+            for(int i=0;i<=word.length()-k;i++) {
+                String temp = word.substring(i,i+k);
+                if (palindromCheck(temp)) return temp;
+            }
+        }
+        return "";
+    }
+
+    public static String longestPalindrome2(String word) {
+        char[] ar = word.toCharArray();
+        int length = word.length();
+        int s=0,e=1;
+        int fs = 0,fe = 0;
+        int size = 0;
+
+        //check for even length palindromes
+        for(int i=1;i<length;i++) {
+            s=i-1;e=i;
+            while(s>=0 && e<length && ar[s]==ar[e]) {
+                s--;
+                e++;
+            }
+            s++;
+            e--;
+//            for(int k=s;k<=e;k++) System.out.print(ar[k]);
+//            System.out.println(String.format(" start :%d-%c end:%d-%c",s,ar[s],e,ar[e]));
+            if(e-s>size){
+                size=e-s;
+                fs=s;
+                fe=e;
+            }
+
+        }
+
+        System.out.println("======================");
+
+        // check for odd length palindromes
+        for(int i=1;i<length-1;i++) {
+            s=i-1;e=i+1;
+            while(s>=0 && e<length && ar[s]==ar[e]) {
+                s--;
+                e++;
+            }
+            s++;
+            e--;
+//            for(int k=s;k<=e;k++) System.out.print(ar[k]);
+//            System.out.println(String.format(" start :%d-%c end:%d-%c",s,ar[s],e,ar[e]));
+            if(e-s>size){
+                size=e-s;
+                fs=s;
+                fe=e;
+            }
+
+        }
+
+//        for(int i=fs;i<=fe;i++) System.out.print(ar[i]);
+//        System.out.println();
+        return word.substring(fs,fe+1);
+    }
+
     
 }
