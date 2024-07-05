@@ -63,7 +63,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            longestPalindrome();
+            findMedianSortedArrays();
             setEndTime();
             showTimeTaken("Total time taken : ");
             
@@ -1238,6 +1238,33 @@ public class Solution {
 //        for(int i=fs;i<=fe;i++) System.out.print(ar[i]);
 //        System.out.println();
         return word.substring(fs,fe+1);
+    }
+
+    //https://leetcode.com/problems/median-of-two-sorted-arrays/description/
+    public static void findMedianSortedArrays() {
+        System.out.println(findMedianSortedArrays(new int[]{1,6,8,99,1000}, new int[]{3,8,10}));
+    }
+
+    //this is O(m+n) but required is O(log(m+n))
+    public static double findMedianSortedArrays(int[] a, int[] b) {
+        int m,i=0,j=0; double curr=0.0;
+        int aSize = a.length, bSize = b.length;
+
+        m = (aSize + bSize)/2;
+        double prev=0;
+        while(m>=0) {
+            prev=curr;
+            if(i<aSize && j<bSize) {
+                if(a[i]<=b[j]) curr=a[i++];
+                else curr=b[j++];
+            } else if (i==aSize && j<bSize) curr=b[j++];
+            else if (j==bSize && i<aSize) curr=a[i++];
+            m--;
+        }
+
+        if((aSize + bSize)%2==0)
+            return (prev+curr)/2;
+        else return curr;
     }
 
     
