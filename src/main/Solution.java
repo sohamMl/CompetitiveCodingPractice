@@ -1216,8 +1216,6 @@ public class Solution {
 
         }
 
-        System.out.println("======================");
-
         // check for odd length palindromes
         for(int i=1;i<length-1;i++) {
             s=i-1;e=i+1;
