@@ -63,7 +63,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            findMedianSortedArrays();
+            convert();
             setEndTime();
             showTimeTaken("Total time taken : ");
             
@@ -1267,5 +1267,43 @@ public class Solution {
         else return curr;
     }
 
-    
+    //https://leetcode.com/problems/reverse-integer/description/
+    // getting tle or mle on leetcode. Dont know why.
+    public static void convert() {
+        System.out.println(convert("PAYPALISHIRING",5));
+    }
+
+    public static String convert(String s, int numRows) {
+        int i=0,n=numRows-1,d1,d2,f=0,curr,len=s.length();
+        StringBuilder newS = new StringBuilder();
+
+        curr = i;
+        while(curr<len) {
+            newS.append(s.charAt(curr));
+            curr+= 2*n;
+        }
+
+        i++;
+        while(i<n) {
+            d1 = 2 * (n-i);
+            d2 = 2 * i;
+            curr = i;
+            f=0;
+            while(curr<len) {
+                f = f%2;
+                newS.append(s.charAt(curr));
+                curr+= f == 0 ? d1 : d2;
+                f++;
+            }
+            i++;
+        }
+
+        curr = i;
+        while(curr<len) {
+            newS.append(s.charAt(curr));
+            curr+= 2*n;
+        }
+
+        return newS.toString();
+    }
 }
