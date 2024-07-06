@@ -1268,12 +1268,11 @@ public class Solution {
     }
 
     //https://leetcode.com/problems/reverse-integer/description/
-    // getting tle or mle on leetcode. Dont know why.
     public static void convert() {
-        System.out.println(convert("PAYPALISHIRING",5));
+        System.out.println(convert("A",1));
     }
-
     public static String convert(String s, int numRows) {
+        if(numRows==1) return s;
         int i=0,n=numRows-1,d1,d2,f=0,curr,len=s.length();
         StringBuilder newS = new StringBuilder();
 
