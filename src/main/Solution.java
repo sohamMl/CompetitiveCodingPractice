@@ -63,7 +63,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            convert();
+            reverse();
             setEndTime();
             showTimeTaken("Total time taken : ");
             
@@ -1304,5 +1304,23 @@ public class Solution {
         }
 
         return newS.toString();
+    }
+
+
+    //https://leetcode.com/problems/reverse-integer/description/
+    public static void reverse() {
+        System.out.println(reverse(-123456));
+    }
+    public static int reverse(int x) {
+        long f=0,r;
+        boolean isNeg=x<0;
+        if(isNeg) x=-x;
+        while(x>0) {
+            r = x % 10;
+            x = x / 10;
+            f = 10 * f + r;
+        }
+        if(isNeg) f=-f;
+        return f< Integer.MIN_VALUE || f> Integer.MAX_VALUE? 0: (int)f;
     }
 }
