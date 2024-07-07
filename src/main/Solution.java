@@ -1359,7 +1359,40 @@ public class Solution {
         return f < Integer.MIN_VALUE || f > Integer.MAX_VALUE ? 0 : (int) f;
     }
 
-    
+
+    // https://leetcode.com/problems/regular-expression-matching/
+    // there is a much faster dp solution
+    public static void isMatch() {
+        System.out.println(isMatch("aaabbccddeeff", "a*b*cc...*"));
+    }
+
+    public static boolean isMatch(String s, String p) {
+        int slen=s.length(),plen=p.length();
+        if (p.charAt(0) == '*') return false;
+        else if(plen == 1) {
+            if(slen>1) return false;
+            return p.charAt(0) == s.charAt(0) || '.' == p.charAt(0);
+        }
+        return isMatch(s, p, 0, 0,slen,plen);
+    }
+
+    public static boolean isMatch(String s, String p, int i, int j,int slen, int plen) {
+        if((i == slen && p.charAt(plen-1) != '*' ) || j == plen) {
+            return i == slen && j == plen;
+        }
+
+        char curr = p.charAt(j);
+
+        boolean matched = false;
+        if(i<slen)
+            matched = !('.' != curr && s.charAt(i) != curr);
+
+        if(j<plen-1 && p.charAt(j+1)=='*')
+            return isMatch(s,p,i,j+2,slen,plen) || (matched && isMatch(s,p,i+1,j,slen,plen));
+        else {
+            return matched && isMatch(s,p,i+1,j+1,slen,plen);
+        }
+    }
 
 
 }
