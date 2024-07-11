@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -63,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            isMatch();
+            threeSum();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1392,6 +1394,75 @@ public class Solution {
         else {
             return matched && isMatch(s,p,i+1,j+1,slen,plen);
         }
+    }
+
+    //https://leetcode.com/problems/3sum/description/
+    public static void threeSum() throws IOException {
+        int n = Integer.parseInt(br.readLine());
+        for(int i=0;i<n;i++){
+            int[] tempInt = Arrays.stream(br.readLine().trim().split(",")).mapToInt(Integer::parseInt).toArray();
+            List<List<Integer>> t = threeSum(tempInt);
+            System.out.println(t);
+            for(List<Integer> l : t){
+                if(l.get(0)+l.get(1)+l.get(2)!=0)
+                    System.out.println(l);
+            }
+        }
+    }
+
+
+    public static int swap(int a, int b) { return a; }
+    public static List<List<Integer>> threeSum(int[] nums) {
+        Map<Integer,Integer> map = new HashMap<>();
+        Set<List<Integer>> set = new HashSet<>();
+        Arrays.sort(nums);
+        int a,b,c,k=0,len=nums.length,count_0=0,m;
+
+        while(k<nums.length) {
+            if (nums[k++]==0) count_0++;
+        }
+        if(count_0>3) {
+            m=0;
+            while(m<nums.length) {
+                if(nums[m++]==0) break;
+            }
+            m++;
+            k=m-3+count_0;
+            while(k<nums.length) nums[m++]=nums[k++];
+            len=nums.length-count_0+3;
+        } else if (count_0==2) {
+            m=0;
+            while(m<nums.length) {
+                if(nums[m++]==0) break;
+            }
+            k=m+1;
+            while(k<nums.length) nums[m++]=nums[k++];
+            len--;
+        }
+
+        for(int i=0;i<len;i++) {
+            if(map.containsKey(nums[i])) map.put(nums[i],map.get(nums[i])+1);
+            else map.put(nums[i],1);
+        }
+
+        for(int i=0;i<len;i++) {
+            for(int j=0;j<len;j++) {
+                if(i==j) continue;
+                a = nums[i];
+                b = nums[j];
+                c = - (a+b);
+
+                if (map.containsKey(c)) {
+                    if ((c == a || c == b) && map.get(c) == 1) continue;
+                    if(a>b) a=swap(b,b=a);
+                    if(a>c) a=swap(c,c=a);
+                    if(b>c) b=swap(c,c=b);
+                    set.add(List.of(a,b,c));
+                }
+
+            }
+        }
+        return set.stream().toList();
     }
 
 
