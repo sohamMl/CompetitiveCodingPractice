@@ -1401,8 +1401,8 @@ public class Solution {
         int n = Integer.parseInt(br.readLine());
         for(int i=0;i<n;i++){
             int[] tempInt = Arrays.stream(br.readLine().trim().split(",")).mapToInt(Integer::parseInt).toArray();
-            List<List<Integer>> t = threeSum(tempInt);
-            System.out.println(t);
+            List<List<Integer>> t = threeSum2(tempInt);
+//            System.out.println(t);
             for(List<Integer> l : t){
                 if(l.get(0)+l.get(1)+l.get(2)!=0)
                     System.out.println(l);
@@ -1460,6 +1460,24 @@ public class Solution {
                     set.add(List.of(a,b,c));
                 }
 
+            }
+        }
+        return set.stream().toList();
+    }
+
+    //a cleaner but slower solution
+    public static List<List<Integer>> threeSum2(int[] nums) {
+        Arrays.sort(nums);
+        int a,b,c;
+        Set<List<Integer>> set = new HashSet<>();
+        for(int i=0;i<nums.length;i++) {
+            for(int j=i+1;j<nums.length;j++) {
+                a = nums[i];
+                b = nums[j];
+                c = -(a+b);
+                if(Arrays.binarySearch(nums,j+1,nums.length,c)>=0) {
+                    set.add(List.of(a,b,c));
+                }
             }
         }
         return set.stream().toList();
