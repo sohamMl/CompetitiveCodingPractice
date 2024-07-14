@@ -65,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            sum3Closest();
+            letterCombinations();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1508,5 +1508,34 @@ public class Solution {
         return smallestSum;
     }
 
+    //https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+    public static void letterCombinations() {
+        String digits = "9923242539";
+        System.out.println(letterCombinations(digits));
+    }
+
+    public static List<String> letterCombinations(String digits) {
+        char[][] nums = new char[10][];
+        nums[2] = new char[]{'a','b','c'};
+        nums[3] = new char[]{'d','e','f'};
+        nums[4] = new char[]{'g','h','i'};
+        nums[5] = new char[]{'j','k','l'};
+        nums[6] = new char[]{'m','n','o'};
+        nums[7] = new char[]{'p','q','r','s'};
+        nums[8] = new char[]{'t','u','v'};
+        nums[9] = new char[]{'w','x','y','z'};
+        List<String> combinations = new ArrayList<>();
+        if(digits.isEmpty()) return combinations;
+        letterCombinations(digits,combinations,nums,"");
+        return combinations;
+    }
+
+    public static void letterCombinations(String digits, List<String> combinations, char[][] nums, String combination) {
+        if(digits.isEmpty()) combinations.add(combination);
+        else {
+            int num = Integer.parseInt(digits.substring(0,1));
+            for(char c : nums[num]) letterCombinations(digits.substring(1),combinations,nums,combination.concat(String.valueOf(c)));
+        }
+    }
 
 }
