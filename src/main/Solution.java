@@ -1545,7 +1545,7 @@ public class Solution {
             String ar[] = br.readLine().trim().split(" ");
             int target = Integer.parseInt(ar[0]);
             int[] nums = Arrays.stream(ar[1].split(",")).mapToInt(Integer::parseInt).toArray();
-            System.out.println(fourSum(nums,target));
+            System.out.println(fourSum2(nums,target));
         }
     }
 
@@ -1566,5 +1566,37 @@ public class Solution {
             }
         }
         return set.stream().toList();
+    }
+
+    //way way faster two pointer solution
+    public static List<List<Integer>> fourSum2(int[] nums, int target) {
+        List<List<Integer>> list = new LinkedList<>();
+        if(nums.length<4) return list;
+        Arrays.sort(nums);
+        int a,b,low,high,len=nums.length;
+        for(int i=0;i<len-3;i++) {
+            if(i>0 && nums[i]==nums[i-1]) continue;
+            for(int j=i+1;j<len-2;j++) {
+                if(j>i+1 && nums[j]==nums[j-1]) continue;
+                a = nums[i];
+                b = nums[j];
+                long sum = (long) target - a - b;
+                low = j+1;
+                high = len-1;
+                while(low<high) {
+                    long twoSum = nums[low] + nums[high];
+                    if(sum == twoSum) {
+                        list.add(List.of(a,b,nums[low],nums[high]));
+                        while(low<high && nums[low] == nums[low+1]) low++;
+                        while(low<high && nums[high] == nums[high-1]) high--;
+                        low++;
+                        high--;
+                    } else if(twoSum>sum) high--;
+                    else low++;
+                }
+            }
+        }
+
+        return list;
     }
 }
