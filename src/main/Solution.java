@@ -65,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            letterCombinations();
+            fourSum();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1538,4 +1538,33 @@ public class Solution {
         }
     }
 
+    //https://leetcode.com/problems/4sum/description/
+    public static void fourSum() throws IOException {
+        int n = Integer.parseInt(br.readLine());
+        for(int i=0;i<n;i++) {
+            String ar[] = br.readLine().trim().split(" ");
+            int target = Integer.parseInt(ar[0]);
+            int[] nums = Arrays.stream(ar[1].split(",")).mapToInt(Integer::parseInt).toArray();
+            System.out.println(fourSum(nums,target));
+        }
+    }
+
+    public static List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        Set<List<Integer>> set = new HashSet<>();
+        for(int i=0;i<nums.length;i++) {
+            for(int j=i+1;j<nums.length;j++) {
+                for(int k=j+1;k<nums.length;k++) {
+                    int a = nums[i];
+                    int b = nums[j];
+                    int c = nums[k];
+                    long sum = (long)a + (long)b + (long)c;
+                    if( sum > (long)Integer.MAX_VALUE || sum < (long)Integer.MIN_VALUE) continue;
+                    int d = target - (a+b+c);
+                    if(Arrays.binarySearch(nums,k+1,nums.length,d)>=0) set.add(List.of(a,b,c,d));
+                }
+            }
+        }
+        return set.stream().toList();
+    }
 }
