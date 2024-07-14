@@ -65,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            removeNthFromEnd();
+            mergeKLists();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1640,4 +1640,69 @@ public class Solution {
         current.next = current.next.next;
         return head;
     }
+
+    public static void printListNode(ListNode node) {
+        while(node!=null){
+            System.out.print(node.val + " ");
+            node = node.next;
+        }
+        System.out.println();
+    }
+
+    //https://leetcode.com/problems/merge-k-sorted-lists/description/
+    public static void mergeKLists() {
+        String d = "[[1,4,5],[1,3,4],[2,6]]";
+        String[] l = d.substring(2,d.length()-2).split("\\],\\[");
+        System.out.println(Arrays.toString(l));
+        ListNode[] lists = new ListNode[l.length];
+        for(int i=0;i<l.length;i++) {
+            int[] nums = Arrays.stream(l[i].split(",")).mapToInt(Integer::parseInt).toArray();
+            ListNode curr=null;
+            for(int j=0;j<nums.length;j++){
+                if(j==0) {
+                    lists[i] = new ListNode(nums[j]);
+                    curr = lists[i];
+                } else {
+                    curr.next = new ListNode(nums[j]);
+                    curr = curr.next;
+                }
+            }
+            printListNode(lists[i]);
+        }
+        printListNode(mergeKLists(lists));
+    }
+
+    public static ListNode mergeKLists(ListNode[] lists) {
+        ListNode head=null,curr=null;
+        int endFlag=0,minVal,minInd=0;
+        while(true) {
+            minVal=Integer.MAX_VALUE; endFlag=0;
+            for(int i=0;i<lists.length;i++) {
+                if(lists[i]==null) {
+                    endFlag++;
+                    continue;
+                }
+                if(lists[i].val<minVal) {
+                    minVal = lists[i].val;
+                    minInd = i;
+                }
+            }
+
+            if(endFlag==lists.length) break;
+
+            if(head==null) {
+                head=lists[minInd];
+                lists[minInd] = lists[minInd].next;
+                curr=head;
+            } else {
+                curr.next = lists[minInd];
+                lists[minInd] = lists[minInd].next;
+                curr = curr.next;
+            }
+        }
+
+        return head;
+    }
+
+
 }
