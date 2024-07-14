@@ -65,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            threeSum();
+            sum3Closest();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1410,7 +1410,6 @@ public class Solution {
         }
     }
 
-
     public static int swap(int a, int b) { return a; }
     public static List<List<Integer>> threeSum(int[] nums) {
         Map<Integer,Integer> map = new HashMap<>();
@@ -1481,6 +1480,32 @@ public class Solution {
             }
         }
         return set.stream().toList();
+    }
+
+    //https://leetcode.com/problems/3sum-closest/description/
+    public static void sum3Closest() {
+        int[] nums = Arrays.stream("0,0,0".split(",")).mapToInt(Integer::parseInt).toArray();
+        int target = 1;
+        System.out.println(threeSumClosest(nums,target));
+    }
+
+    public static int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        //System.out.println(Arrays.toString(nums));
+        int smallestSum=Integer.MAX_VALUE,start,end,sum;
+        for(int i=0;i<nums.length-2;i++) {
+            start=i+1;
+            end=nums.length-1;
+           if(i>0 &&nums[i]==nums[i-1]) continue;
+            while(start<end) {
+                sum=nums[i]+nums[start]+nums[end];
+                //System.out.println(String.format("%d %d %d = %d %d",nums[i],nums[start],nums[end],sum,target-sum));
+                if(Math.abs(target-sum)<Math.abs(target-smallestSum)) smallestSum = sum;
+                if(sum>target) end--;
+                else start++;
+            }
+        }
+        return smallestSum;
     }
 
 
