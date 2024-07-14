@@ -65,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            fourSum();
+            removeNthFromEnd();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1598,5 +1598,46 @@ public class Solution {
         }
 
         return list;
+    }
+
+    //https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+    public static void removeNthFromEnd() {
+        ListNode head = new ListNode(1);
+        head.next = new ListNode(2);
+        ListNode current = head.next;
+        current.next = new ListNode(3);
+        current = current.next;
+        current.next = new ListNode(4);
+        current = current.next;
+        current.next = new ListNode(5);
+
+        head = removeNthFromEnd(head,2);
+        while(head!=null){
+            System.out.print(head.val+ " ");
+            head=head.next;
+        }
+        System.out.println();
+    }
+
+    public static ListNode removeNthFromEnd(ListNode head, int n) {
+        int len=0;
+        ListNode current = head;
+        while(current!=null) {
+            current=current.next;
+            len++;
+        }
+        // System.out.println(len);
+        len=len-n;
+        if(len==0){
+            head=head.next;
+            return head;
+        }
+        current = head;
+        while(len>1){
+            current = current.next;
+            len--;
+        }
+        current.next = current.next.next;
+        return head;
     }
 }
