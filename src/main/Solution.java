@@ -1651,7 +1651,8 @@ public class Solution {
 
     //https://leetcode.com/problems/merge-k-sorted-lists/description/
     public static void mergeKLists() {
-        String d = "[[1,4,5],[1,3,4],[2,6]]";
+        String d;
+        d = "[[1,4,5],[1,3,4],[2,6]]";
         String[] l = d.substring(2,d.length()-2).split("\\],\\[");
         System.out.println(Arrays.toString(l));
         ListNode[] lists = new ListNode[l.length];
@@ -1669,9 +1670,11 @@ public class Solution {
             }
             printListNode(lists[i]);
         }
-        printListNode(mergeKLists(lists));
+//        printListNode(mergeKLists(lists));
+        printListNode(mergeKLists(lists, 0, lists.length - 1));
     }
 
+    // highly optimised nlogn solution
     public static ListNode mergeKLists(ListNode[] lists) {
         ListNode head=null,curr=null;
         int endFlag=0,minVal,minInd=0;
@@ -1702,6 +1705,49 @@ public class Solution {
         }
 
         return head;
+    }
+
+    public static ListNode mergeKLists(ListNode[] lists, int start, int end) {
+        if(lists.length == 0) return null;
+        if(start==end) return lists[start];
+
+        while(start<end) {
+            int mid = start + (end-start)/2;
+            ListNode start1 = mergeKLists(lists,start,mid);
+            ListNode start2 = mergeKLists(lists,mid+1,end);
+            return mergeLists(lists, start1, start2);
+        }
+        return lists[0];
+    }
+
+    public static ListNode mergeLists(ListNode[] lists, ListNode start1, ListNode start2) {
+        ListNode head = new ListNode();
+        ListNode curr = head;
+        while(start1!=null && start2!=null) {
+            if(start1.val<start2.val) {
+                curr.next = start1;
+                curr = curr.next;
+                start1 = start1.next;
+            } else {
+                curr.next = start2;
+                curr = curr.next;
+                start2 = start2.next;
+            }
+        }
+
+        while(start1!=null) {
+            curr.next = start1;
+            curr = curr.next;
+            start1 = start1.next;
+        }
+
+        while(start2!=null){
+            curr.next = start2;
+            curr = curr.next;
+            start2 = start2.next;
+        }
+
+        return head.next;
     }
 
 
