@@ -65,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            mergeKLists();
+            swapPairs();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1748,6 +1748,66 @@ public class Solution {
         }
 
         return head.next;
+    }
+
+    //https://leetcode.com/problems/swap-nodes-in-pairs/description/
+    public static void swapPairs() {
+        int[] nums = Arrays.stream("1,2,3,4,5".split(",")).mapToInt(Integer::parseInt).toArray();
+        ListNode head = new ListNode();
+        ListNode curr = head;
+        for(int i=0;i<nums.length;i++) {
+            curr.next = new ListNode(nums[i]);
+            curr = curr.next;
+        }
+        printListNode(swapPairs(head.next));
+    }
+
+    //1>2>3>4>5>6
+    //2>1  1>4  4>3  3>6  6>5
+    public static ListNode swapPairs(ListNode head) {
+        if(head==null||head.next==null) return head;
+        ListNode _1,_2,_3,_4,temp=head;
+        head = head.next;
+        while(true) {
+            if(temp==null) break;
+            _1=temp;
+            _2=_1.next;
+            if(_2==null) break;
+            _3=_2.next;
+            if(_3==null) {
+                //swap 1 and 2
+                _2.next = _1;
+                _1.next = null;
+                break;
+            }
+            _4=_3.next;
+            if(_4==null) {
+                //swap 1 and 2
+                _2.next = _1;
+                _1.next = _3;
+                _3.next = null;
+                break;
+            }
+
+            _2.next = _1;
+            _1.next = _4;
+
+            //if _4 is the last element
+            if(_4.next == null) {
+                _4.next = _3;
+                _3.next = null;
+                temp = null;
+                continue;
+            } else temp = _4.next;
+
+            //if in the next quad window there is only 1 element
+            if(temp.next == null) {
+                _3.next = temp;
+            } else _3.next = temp.next;
+
+            _4.next=_3;
+        }
+        return head;
     }
 
 
