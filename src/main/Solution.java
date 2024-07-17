@@ -65,7 +65,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            swapPairs();
+            reverseKGroup();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1810,5 +1810,55 @@ public class Solution {
         return head;
     }
 
+    //https://leetcode.com/problems/reverse-nodes-in-k-group/description/
+    public static void reverseKGroup() {
+        int[] nums = Arrays.stream("1,2,3,4,5,6,7,8,9".split(",")).mapToInt(Integer::parseInt).toArray();
+        ListNode head = new ListNode();
+        ListNode curr = head;
+        for(int i=0;i<nums.length;i++) {
+            curr.next = new ListNode(nums[i]);
+            curr = curr.next;
+        }
+        printListNode(reverseKGroup(head.next,2));
+    }
+
+    public static ListNode reverseKGroup(ListNode head, int k) {
+        ListNode lastNode = head;
+        int i=1;
+        while (lastNode!=null && i<k) {
+            lastNode = lastNode.next;
+            i++;
+        }
+
+        if(i==k && lastNode!=null){
+            lastNode.next = reverseKGroup(lastNode.next,k);
+        } else {
+            return head;
+        }
+        return reverseListNodes(head,k);
+    }
+
+    public static ListNode reverseListNodes(ListNode head,int k) {
+        ListNode newHead = new ListNode();
+        ListNode lastNode = new ListNode();
+        ListNode next;
+        ListNode curr = head;
+        for(int i=0;i<k;i++) {
+            if(newHead.next==null) {
+                newHead.next=curr;
+                curr = curr.next;
+                newHead.next.next = null;
+                lastNode = newHead.next;
+            } else {
+                next = curr.next;
+                curr.next = newHead.next;
+                newHead.next = curr;
+                curr = next;
+            }
+        }
+        lastNode.next = curr;
+        printListNode(newHead.next);
+        return newHead.next;
+    }
 
 }
