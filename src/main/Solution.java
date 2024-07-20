@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
@@ -65,7 +66,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            reverseKGroup();
+            findSubString();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1859,6 +1860,100 @@ public class Solution {
         lastNode.next = curr;
         printListNode(newHead.next);
         return newHead.next;
+    }
+
+    //https://leetcode.com/problems/substring-with-concatenation-of-all-words/description/
+    static void findSubString() throws IOException {
+        String s = "tbarfoothefoobarthefoobarman";
+        String[] words = new String[]{"bar","foo","the"};
+        s = "aaa";
+        words = new String[]{"a","a"};
+        int n = Integer.parseInt(br.readLine());
+//        for(int i=0;i<n;i++) {
+//            s = br.readLine();
+//            s = s.substring(1,s.length()-1);
+//            String temp = br.readLine().substring(1,s.length()-1)+"\"";
+//            words = Arrays.stream(temp.split(",")).map(word -> word.substring(1,word.length()-1)).toArray(String[]::new);
+//            //System.out.println(Arrays.toString(words));
+//            System.out.println(findSubstring2(s,words));
+//        }
+        System.out.println(findSubstring2(s,words));
+    }
+
+    //180 / 181 testcases passed
+    public static List<Integer> findSubstring(String s, String[] words) {
+        Map<String,Integer> wordsCount = new HashMap<>();
+        List<Integer> indexes = new ArrayList<>();
+        for(String word: words) {
+            if(wordsCount.containsKey(word)) wordsCount.put(word,wordsCount.get(word)+1);
+            else wordsCount.put(word,1);
+        }
+        int wordLen = words[0].length();
+        int len = words.length;
+        int tempLen,j;
+        Map<String,Integer> map;
+        String word;
+        for(int i=0;i<s.length()-(len*wordLen)+1;i++) {
+            word = s.substring(i,i+wordLen);
+            if(!wordsCount.containsKey(word)) continue;
+            else {
+                //System.out.println(word+ "  " + i);
+                map = new HashMap<>(wordsCount);
+                map.put(word,map.get(word)-1);
+                tempLen = len-1;
+                j=i+wordLen;
+                do{
+                    if(tempLen==0) {
+                        //System.out.println(s.substring(i,i+(len*wordLen)));
+                        indexes.add(i);
+                        break;
+                    }
+                    word = s.substring(j,j+wordLen);
+                    if(!map.containsKey(word) || map.get(word)==0) break;
+                    else {
+                        map.put(word,map.get(word)-1);
+                        j+=wordLen;
+                        tempLen--;
+                    }
+                }while(true);
+            }
+
+        }
+        return indexes;
+    }
+
+
+    public static List<Integer> findSubstring2(String s, String[] words) {
+       List<Integer> nums = new ArrayList<>();
+       int senLen = s.length();
+       int wordsLen = words.length;
+       int w = words[0].length();
+       int currLen;
+       Map<String,Integer> temp;
+       Map<String, Integer> wordsCount = new HashMap<>();
+       for(String word : words) wordsCount.put(word, wordsCount.getOrDefault(word,0)+1);
+       String word,remove;
+
+       for(int i=0;i<w;i++) {
+           temp = new HashMap<>();
+           currLen = 0;
+           for(int j=i,k=i;j+w<=senLen;j+=w) {
+               word = s.substring(j,j+w);
+               temp.put(word,temp.getOrDefault(word,0)+1);
+               currLen++;
+               if (currLen == wordsLen) {
+                   //current window [k , j+w]
+                   if(temp.equals(wordsCount)) nums.add(k);
+                   //remove the first element of the window
+                   remove = s.substring(k,k+w);
+                   temp.computeIfPresent(remove, (key,value) -> value > 1 ? value-1 : null);
+                   currLen--;
+                   k+=w;
+               }
+           }
+       }
+
+       return nums;
     }
 
 }
