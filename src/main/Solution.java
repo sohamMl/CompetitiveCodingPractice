@@ -66,7 +66,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            findSubString();
+            nextPermutation();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1955,5 +1955,47 @@ public class Solution {
 
        return nums;
     }
+
+    //https://leetcode.com/problems/next-permutation/description/
+    public static void nextPermutation() {
+        int nums[] = Arrays.stream("1,2,3,5,7,6,4".split(",")).mapToInt(Integer::parseInt).toArray();
+        nextPermutation(nums);
+    }
+
+
+    public static void nextPermutation(int[] nums) {
+        int len = nums.length;
+        if(len==1)
+            System.out.println(Arrays.toString(nums));
+
+        else if(nums[len-2]<nums[len-1]){
+            int temp = nums[len-1];
+            nums[len-1] = nums[len-2];
+            nums[len-2] = temp;
+            System.out.println(Arrays.toString(nums));
+        } else {
+            int i;
+            for(i=len-1;i>0;i--){
+                if(nums[i-1]<nums[i]) break;
+            }
+
+            if(i==0) {
+                Arrays.sort(nums);
+                System.out.println(Arrays.toString(nums));
+            } else {
+                i--;
+                int smallestInd=i+1;
+                for(int j=i+1;j<len;j++) {
+                    if(nums[j]<nums[smallestInd] && nums[j]>nums[i]) smallestInd = j;
+                }
+
+                nums[i] = swap(nums[smallestInd],nums[smallestInd]=nums[i]);
+                Arrays.sort(nums,i+1,len);
+                System.out.println(Arrays.toString(nums));
+            }
+
+        }
+    }
+
 
 }
