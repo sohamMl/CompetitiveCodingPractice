@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.time.Duration;
 import java.time.LocalTime;
 
+import org.junit.Test;
 import structures.ListNode;
 import structures.MyQueue;
 import structures.Robot;
@@ -2037,5 +2038,12 @@ public class Solution {
         }
         return max;
     }
+
+    @Test
+    public void test() {
+        System.out.println("hello world");
+    }
+
+
 
 }
