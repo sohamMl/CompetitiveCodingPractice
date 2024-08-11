@@ -66,7 +66,7 @@ public class Solution {
             bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
 
             setStartTime();
-            nextPermutation();
+            longestValidParentheses();
             setEndTime();
             showTimeTaken("Total time taken : ");
 
@@ -1997,5 +1997,45 @@ public class Solution {
         }
     }
 
+    //https://leetcode.com/problems/longest-valid-parentheses/
+    public static void longestValidParentheses() {
+        List<String> list = List.of(
+                ")()())",
+                "()(()",
+                "())()())",
+                "(()()(()",
+                "((()((())())())(()))(()))(()",
+                "()",
+                "()()()(())((()))",
+                "(())(",
+                ")()(((())))("
+            );
+
+        for(String s: list) {
+            System.out.println(longestValidParentheses(s));
+            System.out.println("=========================");
+        }
+
+    }
+
+
+    public static int longestValidParentheses(String s) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);
+        int max = 0;
+        for(int i=0;i<s.length();i++) {
+            if(s.charAt(i)=='(') {
+                stack.push(i);
+            } else {
+                stack.pop();
+                if(stack.isEmpty()) {
+                    stack.push(i);
+                } else {
+                    max = Math.max(max,i-stack.peek());
+                }
+            }
+        }
+        return max;
+    }
 
 }
