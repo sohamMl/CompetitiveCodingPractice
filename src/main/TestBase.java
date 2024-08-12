@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,8 +13,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalTime;
 
-public class Problems {
-
+public class TestBase {
     public LocalTime start;
     public LocalTime end;
 
@@ -24,14 +22,14 @@ public class Problems {
 
     @BeforeClass
     public static void init() throws IOException {
-        System.out.println("Starting tests");
+        System.out.println("Initialising resources ...");
         br = new BufferedReader(new FileReader("src/resources/data.txt"));
         bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
     }
 
     @AfterClass
     public static void destroy() throws IOException {
-        System.out.println("ending tests");
+        System.out.println("Closing resources ...");
         br.close();
         bw.close();
     }
@@ -59,16 +57,4 @@ public class Problems {
         System.out.println("=========================");
     }
 
-
-    @Test
-    public void test() throws InterruptedException {
-        System.out.println("hello world");
-        Thread.sleep(5000);
-    }
-
-    @Test
-    public void test2() throws InterruptedException, IOException {
-        System.out.println("hello world 2");
-        Thread.sleep(7000);
-    }
 }

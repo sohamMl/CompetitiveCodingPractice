@@ -2039,11 +2039,4 @@ public class Solution {
         return max;
     }
 
-    @Test
-    public void test() {
-        System.out.println("hello world");
-    }
-
-
-
 }
