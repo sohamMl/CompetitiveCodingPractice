@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import java.time.Duration;
 import java.time.LocalTime;
 
-import org.junit.Test;
 import structures.ListNode;
 import structures.MyQueue;
 import structures.Robot;
@@ -1371,94 +1370,97 @@ public class Solution {
     }
 
     public static boolean isMatch(String s, String p) {
-        int slen=s.length(),plen=p.length();
+        int slen = s.length(), plen = p.length();
         if (p.charAt(0) == '*') return false;
-        else if(plen == 1) {
-            if(slen>1) return false;
+        else if (plen == 1) {
+            if (slen > 1) return false;
             return p.charAt(0) == s.charAt(0) || '.' == p.charAt(0);
         }
-        return isMatch(s, p, 0, 0,slen,plen);
+        return isMatch(s, p, 0, 0, slen, plen);
     }
 
-    public static boolean isMatch(String s, String p, int i, int j,int slen, int plen) {
-        if((i == slen && p.charAt(plen-1) != '*' ) || j == plen) {
+    public static boolean isMatch(String s, String p, int i, int j, int slen, int plen) {
+        if ((i == slen && p.charAt(plen - 1) != '*') || j == plen) {
             return i == slen && j == plen;
         }
 
         char curr = p.charAt(j);
 
         boolean matched = false;
-        if(i<slen)
+        if (i < slen)
             matched = !('.' != curr && s.charAt(i) != curr);
 
-        if(j<plen-1 && p.charAt(j+1)=='*')
-            return isMatch(s,p,i,j+2,slen,plen) || (matched && isMatch(s,p,i+1,j,slen,plen));
+        if (j < plen - 1 && p.charAt(j + 1) == '*')
+            return isMatch(s, p, i, j + 2, slen, plen) || (matched && isMatch(s, p, i + 1, j, slen, plen));
         else {
-            return matched && isMatch(s,p,i+1,j+1,slen,plen);
+            return matched && isMatch(s, p, i + 1, j + 1, slen, plen);
         }
     }
 
     //https://leetcode.com/problems/3sum/description/
     public static void threeSum() throws IOException {
         int n = Integer.parseInt(br.readLine());
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             int[] tempInt = Arrays.stream(br.readLine().trim().split(",")).mapToInt(Integer::parseInt).toArray();
             List<List<Integer>> t = threeSum2(tempInt);
 //            System.out.println(t);
-            for(List<Integer> l : t){
-                if(l.get(0)+l.get(1)+l.get(2)!=0)
+            for (List<Integer> l : t) {
+                if (l.get(0) + l.get(1) + l.get(2) != 0)
                     System.out.println(l);
             }
         }
     }
 
-    public static int swap(int a, int b) { return a; }
+    public static int swap(int a, int b) {
+        return a;
+    }
+
     public static List<List<Integer>> threeSum(int[] nums) {
-        Map<Integer,Integer> map = new HashMap<>();
+        Map<Integer, Integer> map = new HashMap<>();
         Set<List<Integer>> set = new HashSet<>();
         Arrays.sort(nums);
-        int a,b,c,k=0,len=nums.length,count_0=0,m;
+        int a, b, c, k = 0, len = nums.length, count_0 = 0, m;
 
-        while(k<nums.length) {
-            if (nums[k++]==0) count_0++;
+        while (k < nums.length) {
+            if (nums[k++] == 0) count_0++;
         }
-        if(count_0>3) {
-            m=0;
-            while(m<nums.length) {
-                if(nums[m++]==0) break;
+        if (count_0 > 3) {
+            m = 0;
+            while (m < nums.length) {
+                if (nums[m++] == 0) break;
             }
             m++;
-            k=m-3+count_0;
-            while(k<nums.length) nums[m++]=nums[k++];
-            len=nums.length-count_0+3;
-        } else if (count_0==2) {
-            m=0;
-            while(m<nums.length) {
-                if(nums[m++]==0) break;
+            k = m - 3 + count_0;
+            while (k < nums.length) nums[m++] = nums[k++];
+            len = nums.length - count_0 + 3;
+        } else if (count_0 == 2) {
+            m = 0;
+            while (m < nums.length) {
+                if (nums[m++] == 0) break;
             }
-            k=m+1;
-            while(k<nums.length) nums[m++]=nums[k++];
+            k = m + 1;
+            while (k < nums.length) nums[m++] = nums[k++];
             len--;
         }
 
-        for(int i=0;i<len;i++) {
-            if(map.containsKey(nums[i])) map.put(nums[i],map.get(nums[i])+1);
-            else map.put(nums[i],1);
+        for (int i = 0; i < len; i++) {
+            if (map.containsKey(nums[i])) map.put(nums[i], map.get(nums[i]) + 1);
+            else map.put(nums[i], 1);
         }
 
-        for(int i=0;i<len;i++) {
-            for(int j=0;j<len;j++) {
-                if(i==j) continue;
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < len; j++) {
+                if (i == j) continue;
                 a = nums[i];
                 b = nums[j];
-                c = - (a+b);
+                c = -(a + b);
 
                 if (map.containsKey(c)) {
                     if ((c == a || c == b) && map.get(c) == 1) continue;
-                    if(a>b) a=swap(b,b=a);
-                    if(a>c) a=swap(c,c=a);
-                    if(b>c) b=swap(c,c=b);
-                    set.add(List.of(a,b,c));
+                    if (a > b) a = swap(b, b = a);
+                    if (a > c) a = swap(c, c = a);
+                    if (b > c) b = swap(c, c = b);
+                    set.add(List.of(a, b, c));
                 }
 
             }
@@ -1469,15 +1471,15 @@ public class Solution {
     //a cleaner but slower solution
     public static List<List<Integer>> threeSum2(int[] nums) {
         Arrays.sort(nums);
-        int a,b,c;
+        int a, b, c;
         Set<List<Integer>> set = new HashSet<>();
-        for(int i=0;i<nums.length;i++) {
-            for(int j=i+1;j<nums.length;j++) {
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
                 a = nums[i];
                 b = nums[j];
-                c = -(a+b);
-                if(Arrays.binarySearch(nums,j+1,nums.length,c)>=0) {
-                    set.add(List.of(a,b,c));
+                c = -(a + b);
+                if (Arrays.binarySearch(nums, j + 1, nums.length, c) >= 0) {
+                    set.add(List.of(a, b, c));
                 }
             }
         }
@@ -1488,22 +1490,22 @@ public class Solution {
     public static void sum3Closest() {
         int[] nums = Arrays.stream("0,0,0".split(",")).mapToInt(Integer::parseInt).toArray();
         int target = 1;
-        System.out.println(threeSumClosest(nums,target));
+        System.out.println(threeSumClosest(nums, target));
     }
 
     public static int threeSumClosest(int[] nums, int target) {
         Arrays.sort(nums);
         //System.out.println(Arrays.toString(nums));
-        int smallestSum=Integer.MAX_VALUE,start,end,sum;
-        for(int i=0;i<nums.length-2;i++) {
-            start=i+1;
-            end=nums.length-1;
-           if(i>0 &&nums[i]==nums[i-1]) continue;
-            while(start<end) {
-                sum=nums[i]+nums[start]+nums[end];
+        int smallestSum = Integer.MAX_VALUE, start, end, sum;
+        for (int i = 0; i < nums.length - 2; i++) {
+            start = i + 1;
+            end = nums.length - 1;
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            while (start < end) {
+                sum = nums[i] + nums[start] + nums[end];
                 //System.out.println(String.format("%d %d %d = %d %d",nums[i],nums[start],nums[end],sum,target-sum));
-                if(Math.abs(target-sum)<Math.abs(target-smallestSum)) smallestSum = sum;
-                if(sum>target) end--;
+                if (Math.abs(target - sum) < Math.abs(target - smallestSum)) smallestSum = sum;
+                if (sum > target) end--;
                 else start++;
             }
         }
@@ -1518,52 +1520,53 @@ public class Solution {
 
     public static List<String> letterCombinations(String digits) {
         char[][] nums = new char[10][];
-        nums[2] = new char[]{'a','b','c'};
-        nums[3] = new char[]{'d','e','f'};
-        nums[4] = new char[]{'g','h','i'};
-        nums[5] = new char[]{'j','k','l'};
-        nums[6] = new char[]{'m','n','o'};
-        nums[7] = new char[]{'p','q','r','s'};
-        nums[8] = new char[]{'t','u','v'};
-        nums[9] = new char[]{'w','x','y','z'};
+        nums[2] = new char[]{'a', 'b', 'c'};
+        nums[3] = new char[]{'d', 'e', 'f'};
+        nums[4] = new char[]{'g', 'h', 'i'};
+        nums[5] = new char[]{'j', 'k', 'l'};
+        nums[6] = new char[]{'m', 'n', 'o'};
+        nums[7] = new char[]{'p', 'q', 'r', 's'};
+        nums[8] = new char[]{'t', 'u', 'v'};
+        nums[9] = new char[]{'w', 'x', 'y', 'z'};
         List<String> combinations = new ArrayList<>();
-        if(digits.isEmpty()) return combinations;
-        letterCombinations(digits,combinations,nums,"");
+        if (digits.isEmpty()) return combinations;
+        letterCombinations(digits, combinations, nums, "");
         return combinations;
     }
 
     public static void letterCombinations(String digits, List<String> combinations, char[][] nums, String combination) {
-        if(digits.isEmpty()) combinations.add(combination);
+        if (digits.isEmpty()) combinations.add(combination);
         else {
-            int num = Integer.parseInt(digits.substring(0,1));
-            for(char c : nums[num]) letterCombinations(digits.substring(1),combinations,nums,combination.concat(String.valueOf(c)));
+            int num = Integer.parseInt(digits.substring(0, 1));
+            for (char c : nums[num])
+                letterCombinations(digits.substring(1), combinations, nums, combination.concat(String.valueOf(c)));
         }
     }
 
     //https://leetcode.com/problems/4sum/description/
     public static void fourSum() throws IOException {
         int n = Integer.parseInt(br.readLine());
-        for(int i=0;i<n;i++) {
+        for (int i = 0; i < n; i++) {
             String ar[] = br.readLine().trim().split(" ");
             int target = Integer.parseInt(ar[0]);
             int[] nums = Arrays.stream(ar[1].split(",")).mapToInt(Integer::parseInt).toArray();
-            System.out.println(fourSum2(nums,target));
+            System.out.println(fourSum2(nums, target));
         }
     }
 
     public static List<List<Integer>> fourSum(int[] nums, int target) {
         Arrays.sort(nums);
         Set<List<Integer>> set = new HashSet<>();
-        for(int i=0;i<nums.length;i++) {
-            for(int j=i+1;j<nums.length;j++) {
-                for(int k=j+1;k<nums.length;k++) {
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                for (int k = j + 1; k < nums.length; k++) {
                     int a = nums[i];
                     int b = nums[j];
                     int c = nums[k];
-                    long sum = (long)a + (long)b + (long)c;
-                    if( sum > (long)Integer.MAX_VALUE || sum < (long)Integer.MIN_VALUE) continue;
-                    int d = target - (a+b+c);
-                    if(Arrays.binarySearch(nums,k+1,nums.length,d)>=0) set.add(List.of(a,b,c,d));
+                    long sum = (long) a + (long) b + (long) c;
+                    if (sum > (long) Integer.MAX_VALUE || sum < (long) Integer.MIN_VALUE) continue;
+                    int d = target - (a + b + c);
+                    if (Arrays.binarySearch(nums, k + 1, nums.length, d) >= 0) set.add(List.of(a, b, c, d));
                 }
             }
         }
@@ -1573,27 +1576,27 @@ public class Solution {
     //way way faster two pointer solution
     public static List<List<Integer>> fourSum2(int[] nums, int target) {
         List<List<Integer>> list = new LinkedList<>();
-        if(nums.length<4) return list;
+        if (nums.length < 4) return list;
         Arrays.sort(nums);
-        int a,b,low,high,len=nums.length;
-        for(int i=0;i<len-3;i++) {
-            if(i>0 && nums[i]==nums[i-1]) continue;
-            for(int j=i+1;j<len-2;j++) {
-                if(j>i+1 && nums[j]==nums[j-1]) continue;
+        int a, b, low, high, len = nums.length;
+        for (int i = 0; i < len - 3; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            for (int j = i + 1; j < len - 2; j++) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) continue;
                 a = nums[i];
                 b = nums[j];
                 long sum = (long) target - a - b;
-                low = j+1;
-                high = len-1;
-                while(low<high) {
+                low = j + 1;
+                high = len - 1;
+                while (low < high) {
                     long twoSum = nums[low] + nums[high];
-                    if(sum == twoSum) {
-                        list.add(List.of(a,b,nums[low],nums[high]));
-                        while(low<high && nums[low] == nums[low+1]) low++;
-                        while(low<high && nums[high] == nums[high-1]) high--;
+                    if (sum == twoSum) {
+                        list.add(List.of(a, b, nums[low], nums[high]));
+                        while (low < high && nums[low] == nums[low + 1]) low++;
+                        while (low < high && nums[high] == nums[high - 1]) high--;
                         low++;
                         high--;
-                    } else if(twoSum>sum) high--;
+                    } else if (twoSum > sum) high--;
                     else low++;
                 }
             }
@@ -1613,29 +1616,29 @@ public class Solution {
         current = current.next;
         current.next = new ListNode(5);
 
-        head = removeNthFromEnd(head,2);
-        while(head!=null){
-            System.out.print(head.val+ " ");
-            head=head.next;
+        head = removeNthFromEnd(head, 2);
+        while (head != null) {
+            System.out.print(head.val + " ");
+            head = head.next;
         }
         System.out.println();
     }
 
     public static ListNode removeNthFromEnd(ListNode head, int n) {
-        int len=0;
+        int len = 0;
         ListNode current = head;
-        while(current!=null) {
-            current=current.next;
+        while (current != null) {
+            current = current.next;
             len++;
         }
         // System.out.println(len);
-        len=len-n;
-        if(len==0){
-            head=head.next;
+        len = len - n;
+        if (len == 0) {
+            head = head.next;
             return head;
         }
         current = head;
-        while(len>1){
+        while (len > 1) {
             current = current.next;
             len--;
         }
@@ -1644,7 +1647,7 @@ public class Solution {
     }
 
     public static void printListNode(ListNode node) {
-        while(node!=null){
+        while (node != null) {
             System.out.print(node.val + " ");
             node = node.next;
         }
@@ -1655,14 +1658,14 @@ public class Solution {
     public static void mergeKLists() {
         String d;
         d = "[[1,4,5],[1,3,4],[2,6]]";
-        String[] l = d.substring(2,d.length()-2).split("\\],\\[");
+        String[] l = d.substring(2, d.length() - 2).split("\\],\\[");
         System.out.println(Arrays.toString(l));
         ListNode[] lists = new ListNode[l.length];
-        for(int i=0;i<l.length;i++) {
+        for (int i = 0; i < l.length; i++) {
             int[] nums = Arrays.stream(l[i].split(",")).mapToInt(Integer::parseInt).toArray();
-            ListNode curr=null;
-            for(int j=0;j<nums.length;j++){
-                if(j==0) {
+            ListNode curr = null;
+            for (int j = 0; j < nums.length; j++) {
+                if (j == 0) {
                     lists[i] = new ListNode(nums[j]);
                     curr = lists[i];
                 } else {
@@ -1678,27 +1681,28 @@ public class Solution {
 
     // highly optimised nlogn solution
     public static ListNode mergeKLists(ListNode[] lists) {
-        ListNode head=null,curr=null;
-        int endFlag=0,minVal,minInd=0;
-        while(true) {
-            minVal=Integer.MAX_VALUE; endFlag=0;
-            for(int i=0;i<lists.length;i++) {
-                if(lists[i]==null) {
+        ListNode head = null, curr = null;
+        int endFlag = 0, minVal, minInd = 0;
+        while (true) {
+            minVal = Integer.MAX_VALUE;
+            endFlag = 0;
+            for (int i = 0; i < lists.length; i++) {
+                if (lists[i] == null) {
                     endFlag++;
                     continue;
                 }
-                if(lists[i].val<minVal) {
+                if (lists[i].val < minVal) {
                     minVal = lists[i].val;
                     minInd = i;
                 }
             }
 
-            if(endFlag==lists.length) break;
+            if (endFlag == lists.length) break;
 
-            if(head==null) {
-                head=lists[minInd];
+            if (head == null) {
+                head = lists[minInd];
                 lists[minInd] = lists[minInd].next;
-                curr=head;
+                curr = head;
             } else {
                 curr.next = lists[minInd];
                 lists[minInd] = lists[minInd].next;
@@ -1710,13 +1714,13 @@ public class Solution {
     }
 
     public static ListNode mergeKLists(ListNode[] lists, int start, int end) {
-        if(lists.length == 0) return null;
-        if(start==end) return lists[start];
+        if (lists.length == 0) return null;
+        if (start == end) return lists[start];
 
-        while(start<end) {
-            int mid = start + (end-start)/2;
-            ListNode start1 = mergeKLists(lists,start,mid);
-            ListNode start2 = mergeKLists(lists,mid+1,end);
+        while (start < end) {
+            int mid = start + (end - start) / 2;
+            ListNode start1 = mergeKLists(lists, start, mid);
+            ListNode start2 = mergeKLists(lists, mid + 1, end);
             return mergeLists(lists, start1, start2);
         }
         return lists[0];
@@ -1725,8 +1729,8 @@ public class Solution {
     public static ListNode mergeLists(ListNode[] lists, ListNode start1, ListNode start2) {
         ListNode head = new ListNode();
         ListNode curr = head;
-        while(start1!=null && start2!=null) {
-            if(start1.val<start2.val) {
+        while (start1 != null && start2 != null) {
+            if (start1.val < start2.val) {
                 curr.next = start1;
                 curr = curr.next;
                 start1 = start1.next;
@@ -1737,13 +1741,13 @@ public class Solution {
             }
         }
 
-        while(start1!=null) {
+        while (start1 != null) {
             curr.next = start1;
             curr = curr.next;
             start1 = start1.next;
         }
 
-        while(start2!=null){
+        while (start2 != null) {
             curr.next = start2;
             curr = curr.next;
             start2 = start2.next;
@@ -1757,7 +1761,7 @@ public class Solution {
         int[] nums = Arrays.stream("1,2,3,4,5".split(",")).mapToInt(Integer::parseInt).toArray();
         ListNode head = new ListNode();
         ListNode curr = head;
-        for(int i=0;i<nums.length;i++) {
+        for (int i = 0; i < nums.length; i++) {
             curr.next = new ListNode(nums[i]);
             curr = curr.next;
         }
@@ -1767,23 +1771,23 @@ public class Solution {
     //1>2>3>4>5>6
     //2>1  1>4  4>3  3>6  6>5
     public static ListNode swapPairs(ListNode head) {
-        if(head==null||head.next==null) return head;
-        ListNode _1,_2,_3,_4,temp=head;
+        if (head == null || head.next == null) return head;
+        ListNode _1, _2, _3, _4, temp = head;
         head = head.next;
-        while(true) {
-            if(temp==null) break;
-            _1=temp;
-            _2=_1.next;
-            if(_2==null) break;
-            _3=_2.next;
-            if(_3==null) {
+        while (true) {
+            if (temp == null) break;
+            _1 = temp;
+            _2 = _1.next;
+            if (_2 == null) break;
+            _3 = _2.next;
+            if (_3 == null) {
                 //swap 1 and 2
                 _2.next = _1;
                 _1.next = null;
                 break;
             }
-            _4=_3.next;
-            if(_4==null) {
+            _4 = _3.next;
+            if (_4 == null) {
                 //swap 1 and 2
                 _2.next = _1;
                 _1.next = _3;
@@ -1795,7 +1799,7 @@ public class Solution {
             _1.next = _4;
 
             //if _4 is the last element
-            if(_4.next == null) {
+            if (_4.next == null) {
                 _4.next = _3;
                 _3.next = null;
                 temp = null;
@@ -1803,11 +1807,11 @@ public class Solution {
             } else temp = _4.next;
 
             //if in the next quad window there is only 1 element
-            if(temp.next == null) {
+            if (temp.next == null) {
                 _3.next = temp;
             } else _3.next = temp.next;
 
-            _4.next=_3;
+            _4.next = _3;
         }
         return head;
     }
@@ -1817,37 +1821,37 @@ public class Solution {
         int[] nums = Arrays.stream("1,2,3,4,5,6,7,8,9".split(",")).mapToInt(Integer::parseInt).toArray();
         ListNode head = new ListNode();
         ListNode curr = head;
-        for(int i=0;i<nums.length;i++) {
+        for (int i = 0; i < nums.length; i++) {
             curr.next = new ListNode(nums[i]);
             curr = curr.next;
         }
-        printListNode(reverseKGroup(head.next,2));
+        printListNode(reverseKGroup(head.next, 2));
     }
 
     public static ListNode reverseKGroup(ListNode head, int k) {
         ListNode lastNode = head;
-        int i=1;
-        while (lastNode!=null && i<k) {
+        int i = 1;
+        while (lastNode != null && i < k) {
             lastNode = lastNode.next;
             i++;
         }
 
-        if(i==k && lastNode!=null){
-            lastNode.next = reverseKGroup(lastNode.next,k);
+        if (i == k && lastNode != null) {
+            lastNode.next = reverseKGroup(lastNode.next, k);
         } else {
             return head;
         }
-        return reverseListNodes(head,k);
+        return reverseListNodes(head, k);
     }
 
-    public static ListNode reverseListNodes(ListNode head,int k) {
+    public static ListNode reverseListNodes(ListNode head, int k) {
         ListNode newHead = new ListNode();
         ListNode lastNode = new ListNode();
         ListNode next;
         ListNode curr = head;
-        for(int i=0;i<k;i++) {
-            if(newHead.next==null) {
-                newHead.next=curr;
+        for (int i = 0; i < k; i++) {
+            if (newHead.next == null) {
+                newHead.next = curr;
                 curr = curr.next;
                 newHead.next.next = null;
                 lastNode = newHead.next;
@@ -1866,9 +1870,9 @@ public class Solution {
     //https://leetcode.com/problems/substring-with-concatenation-of-all-words/description/
     static void findSubString() throws IOException {
         String s = "tbarfoothefoobarthefoobarman";
-        String[] words = new String[]{"bar","foo","the"};
+        String[] words = new String[]{"bar", "foo", "the"};
         s = "aaa";
-        words = new String[]{"a","a"};
+        words = new String[]{"a", "a"};
         int n = Integer.parseInt(br.readLine());
 //        for(int i=0;i<n;i++) {
 //            s = br.readLine();
@@ -1878,45 +1882,45 @@ public class Solution {
 //            //System.out.println(Arrays.toString(words));
 //            System.out.println(findSubstring2(s,words));
 //        }
-        System.out.println(findSubstring2(s,words));
+        System.out.println(findSubstring2(s, words));
     }
 
     //180 / 181 testcases passed
     public static List<Integer> findSubstring(String s, String[] words) {
-        Map<String,Integer> wordsCount = new HashMap<>();
+        Map<String, Integer> wordsCount = new HashMap<>();
         List<Integer> indexes = new ArrayList<>();
-        for(String word: words) {
-            if(wordsCount.containsKey(word)) wordsCount.put(word,wordsCount.get(word)+1);
-            else wordsCount.put(word,1);
+        for (String word : words) {
+            if (wordsCount.containsKey(word)) wordsCount.put(word, wordsCount.get(word) + 1);
+            else wordsCount.put(word, 1);
         }
         int wordLen = words[0].length();
         int len = words.length;
-        int tempLen,j;
-        Map<String,Integer> map;
+        int tempLen, j;
+        Map<String, Integer> map;
         String word;
-        for(int i=0;i<s.length()-(len*wordLen)+1;i++) {
-            word = s.substring(i,i+wordLen);
-            if(!wordsCount.containsKey(word)) continue;
+        for (int i = 0; i < s.length() - (len * wordLen) + 1; i++) {
+            word = s.substring(i, i + wordLen);
+            if (!wordsCount.containsKey(word)) continue;
             else {
                 //System.out.println(word+ "  " + i);
                 map = new HashMap<>(wordsCount);
-                map.put(word,map.get(word)-1);
-                tempLen = len-1;
-                j=i+wordLen;
-                do{
-                    if(tempLen==0) {
+                map.put(word, map.get(word) - 1);
+                tempLen = len - 1;
+                j = i + wordLen;
+                do {
+                    if (tempLen == 0) {
                         //System.out.println(s.substring(i,i+(len*wordLen)));
                         indexes.add(i);
                         break;
                     }
-                    word = s.substring(j,j+wordLen);
-                    if(!map.containsKey(word) || map.get(word)==0) break;
+                    word = s.substring(j, j + wordLen);
+                    if (!map.containsKey(word) || map.get(word) == 0) break;
                     else {
-                        map.put(word,map.get(word)-1);
-                        j+=wordLen;
+                        map.put(word, map.get(word) - 1);
+                        j += wordLen;
                         tempLen--;
                     }
-                }while(true);
+                } while (true);
             }
 
         }
@@ -1925,36 +1929,36 @@ public class Solution {
 
 
     public static List<Integer> findSubstring2(String s, String[] words) {
-       List<Integer> nums = new ArrayList<>();
-       int senLen = s.length();
-       int wordsLen = words.length;
-       int w = words[0].length();
-       int currLen;
-       Map<String,Integer> temp;
-       Map<String, Integer> wordsCount = new HashMap<>();
-       for(String word : words) wordsCount.put(word, wordsCount.getOrDefault(word,0)+1);
-       String word,remove;
+        List<Integer> nums = new ArrayList<>();
+        int senLen = s.length();
+        int wordsLen = words.length;
+        int w = words[0].length();
+        int currLen;
+        Map<String, Integer> temp;
+        Map<String, Integer> wordsCount = new HashMap<>();
+        for (String word : words) wordsCount.put(word, wordsCount.getOrDefault(word, 0) + 1);
+        String word, remove;
 
-       for(int i=0;i<w;i++) {
-           temp = new HashMap<>();
-           currLen = 0;
-           for(int j=i,k=i;j+w<=senLen;j+=w) {
-               word = s.substring(j,j+w);
-               temp.put(word,temp.getOrDefault(word,0)+1);
-               currLen++;
-               if (currLen == wordsLen) {
-                   //current window [k , j+w]
-                   if(temp.equals(wordsCount)) nums.add(k);
-                   //remove the first element of the window
-                   remove = s.substring(k,k+w);
-                   temp.computeIfPresent(remove, (key,value) -> value > 1 ? value-1 : null);
-                   currLen--;
-                   k+=w;
-               }
-           }
-       }
+        for (int i = 0; i < w; i++) {
+            temp = new HashMap<>();
+            currLen = 0;
+            for (int j = i, k = i; j + w <= senLen; j += w) {
+                word = s.substring(j, j + w);
+                temp.put(word, temp.getOrDefault(word, 0) + 1);
+                currLen++;
+                if (currLen == wordsLen) {
+                    //current window [k , j+w]
+                    if (temp.equals(wordsCount)) nums.add(k);
+                    //remove the first element of the window
+                    remove = s.substring(k, k + w);
+                    temp.computeIfPresent(remove, (key, value) -> value > 1 ? value - 1 : null);
+                    currLen--;
+                    k += w;
+                }
+            }
+        }
 
-       return nums;
+        return nums;
     }
 
     //https://leetcode.com/problems/next-permutation/description/
@@ -1966,32 +1970,32 @@ public class Solution {
 
     public static void nextPermutation(int[] nums) {
         int len = nums.length;
-        if(len==1)
+        if (len == 1)
             System.out.println(Arrays.toString(nums));
 
-        else if(nums[len-2]<nums[len-1]){
-            int temp = nums[len-1];
-            nums[len-1] = nums[len-2];
-            nums[len-2] = temp;
+        else if (nums[len - 2] < nums[len - 1]) {
+            int temp = nums[len - 1];
+            nums[len - 1] = nums[len - 2];
+            nums[len - 2] = temp;
             System.out.println(Arrays.toString(nums));
         } else {
             int i;
-            for(i=len-1;i>0;i--){
-                if(nums[i-1]<nums[i]) break;
+            for (i = len - 1; i > 0; i--) {
+                if (nums[i - 1] < nums[i]) break;
             }
 
-            if(i==0) {
+            if (i == 0) {
                 Arrays.sort(nums);
                 System.out.println(Arrays.toString(nums));
             } else {
                 i--;
-                int smallestInd=i+1;
-                for(int j=i+1;j<len;j++) {
-                    if(nums[j]<nums[smallestInd] && nums[j]>nums[i]) smallestInd = j;
+                int smallestInd = i + 1;
+                for (int j = i + 1; j < len; j++) {
+                    if (nums[j] < nums[smallestInd] && nums[j] > nums[i]) smallestInd = j;
                 }
 
-                nums[i] = swap(nums[smallestInd],nums[smallestInd]=nums[i]);
-                Arrays.sort(nums,i+1,len);
+                nums[i] = swap(nums[smallestInd], nums[smallestInd] = nums[i]);
+                Arrays.sort(nums, i + 1, len);
                 System.out.println(Arrays.toString(nums));
             }
 
@@ -2010,9 +2014,9 @@ public class Solution {
                 "()()()(())((()))",
                 "(())(",
                 ")()(((())))("
-            );
+        );
 
-        for(String s: list) {
+        for (String s : list) {
             System.out.println(longestValidParentheses(s));
             System.out.println("=========================");
         }
@@ -2024,15 +2028,15 @@ public class Solution {
         Stack<Integer> stack = new Stack<>();
         stack.push(-1);
         int max = 0;
-        for(int i=0;i<s.length();i++) {
-            if(s.charAt(i)=='(') {
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
                 stack.push(i);
             } else {
                 stack.pop();
-                if(stack.isEmpty()) {
+                if (stack.isEmpty()) {
                     stack.push(i);
                 } else {
-                    max = Math.max(max,i-stack.peek());
+                    max = Math.max(max, i - stack.peek());
                 }
             }
         }

@@ -1,9 +1,9 @@
 package main;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,25 +20,25 @@ public class TestBase {
     public static BufferedReader br;
     public static BufferedWriter bw;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws IOException {
         System.out.println("Initialising resources ...");
         br = new BufferedReader(new FileReader("src/resources/data.txt"));
         bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
     }
 
-    @AfterClass
+    @AfterAll
     public static void destroy() throws IOException {
         System.out.println("Closing resources ...");
         br.close();
         bw.close();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         setStartTime();
     }
-    @After
+    @AfterEach
     public void after() {
         setEndTime();
         showTimeTaken("Total time taken : ");
