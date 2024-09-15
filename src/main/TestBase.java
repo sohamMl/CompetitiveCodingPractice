@@ -52,7 +52,7 @@ public class TestBase {
         end = LocalTime.now();
     }
     public void showTimeTaken(String msg) {
-        System.out.println("=========================");
+        //System.out.println("=========================");
         System.out.println(msg + "\n" + ((float) Duration.between(start, end).toMillis() / 1000) + "s");
         System.out.println("=========================");
     }
