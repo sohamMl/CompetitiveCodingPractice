@@ -19,12 +19,14 @@ public class TestBase {
 
     public static BufferedReader br;
     public static BufferedWriter bw;
+    public static BufferedWriter bl;
 
     @BeforeAll
     public static void init() throws IOException {
         System.out.println("Initialising resources ...");
         br = new BufferedReader(new FileReader("src/resources/data.txt"));
         bw = new BufferedWriter(new FileWriter("src/resources/result.txt"));
+        bl = new BufferedWriter(new FileWriter("src/log.txt"));
     }
 
     @AfterAll
@@ -32,6 +34,7 @@ public class TestBase {
         System.out.println("Closing resources ...");
         br.close();
         bw.close();
+        bl.close();
     }
 
     @BeforeEach
@@ -55,6 +58,36 @@ public class TestBase {
         //System.out.println("=========================");
         System.out.println(msg + "\n" + ((float) Duration.between(start, end).toMillis() / 1000) + "s");
         System.out.println("=========================");
+    }
+
+    void print(Object s) {
+        try{
+            System.out.print(s.toString());
+            bl.write(s.toString());
+        }catch (Exception e) {
+
+        }
+
+    }
+
+    void println(Object s) {
+        try {
+            System.out.println(s.toString());
+            bl.write(s.toString());
+            bl.newLine();
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    void println() {
+        try {
+            System.out.println();
+            bl.newLine();
+        } catch (Exception e) {
+
+        }
     }
 
 }

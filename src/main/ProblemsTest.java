@@ -5,14 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 
 public class ProblemsTest extends TestBase {
+
 
     //https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
     @ParameterizedTest
@@ -124,6 +129,110 @@ public class ProblemsTest extends TestBase {
 
         return true;
     }
+
+    //https://leetcode.com/problems/sudoku-solver/description/
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "[[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]",
+    })
+    public void solveSudoku_(String data) {
+        char board[][] = new char[9][9];
+        String[] rowList = data.substring(2,data.length()-2).split("\\],\\[");
+        String splitChar = "\",\"";
+        for(int i=0;i<9;i++) {
+            //System.out.println(Arrays.toString(rowList[i].substring(1, rowList[i].length() - 1).split(splitChar)));
+            Character[] values = Arrays.stream(rowList[i].substring(1, rowList[i].length() - 1).split(splitChar)).map(s -> s.charAt(0)).toArray(Character[]::new);
+            //System.out.println(Arrays.toString(values));
+            for(int j=0;j<9;j++) board[i][j] = values[j];
+        }
+//        Arrays.stream(board).toList().forEach(row -> System.out.println(Arrays.toString(row)));
+        Assertions.assertEquals(true, solveSudoku(board));
+    }
+
+    private boolean solveSudoku(char[][] board){
+        List<Set<Character>> row_set = new ArrayList<>();
+        List<Set<Character>> col_set = new ArrayList<>();
+        List<List<Set<Character>>> block_set = new ArrayList<>();
+
+        for(int i=0;i<9;i++) {
+            row_set.add(new HashSet<Character>());
+            col_set.add(new HashSet<Character>());
+        }
+
+        for(int i=0;i<3;i++) {
+            block_set.add(new ArrayList<>());
+            for(int j=0;j<3;j++) {
+                block_set.get(i).add(new HashSet<Character>());
+            }
+        }
+
+        for(int i=0;i<9;i++) {
+            for(int j=0;j<9;j++) {
+                if(board[i][j]!='.') {
+                    row_set.get(i).add(board[i][j]);
+                    col_set.get(j).add(board[i][j]);
+                    block_set.get(i/3).get(j/3).add(board[i][j]);
+                }
+            }
+        }
+        return solveSudoku3(board,0,0, row_set, col_set, block_set);
+    }
+
+
+    public boolean solveSudoku3(char[][] board, int i, int j,
+                                List<Set<Character>> row_set,
+                                List<Set<Character>> col_set,
+                                List<List<Set<Character>>> block_set) {
+        if(i==9) {
+            Arrays.stream(board).toList().forEach(row -> println(Arrays.toString(row)));
+            return true;
+        } else if (board[i][j]!='.') {
+            if(j==8) {
+                i+=1;j=0;
+            } else j+=1;
+            return solveSudoku3(board,i,j,row_set,col_set,block_set);
+        } else {
+            List<Character> possible_vals = new ArrayList<>();
+
+            for(int k=1; k<=9; k++) {
+                char c = Character.forDigit(k,10);
+
+                if(row_set.get(i).contains(c) || col_set.get(j).contains(c) || block_set.get(i/3).get(j/3).contains(c))
+                    continue;
+
+                possible_vals.add(c);
+            }
+
+            if(possible_vals.size()==0) return false;
+
+            int next_i, next_j;
+            if(j==8) {
+                next_i=i+1;
+                next_j=0;
+            } else {
+                next_i=i;
+                next_j=j+1;
+            }
+
+            for(int k=0;k<possible_vals.size();k++) {
+                row_set.get(i).add(possible_vals.get(k));
+                col_set.get(j).add(possible_vals.get(k));
+                block_set.get(i/3).get(j/3).add(possible_vals.get(k));
+
+                board[i][j] = possible_vals.get(k);
+
+                if(!solveSudoku3(board,next_i,next_j,row_set,col_set,block_set)){
+                    row_set.get(i).remove(board[i][j]);
+                    col_set.get(j).remove(board[i][j]);
+                    block_set.get(i/3).get(j/3).remove(board[i][j]);
+                    board[i][j]='.';
+                } else return true;
+            }
+            return false;
+        }
+    }
+
+
 
 
 }
