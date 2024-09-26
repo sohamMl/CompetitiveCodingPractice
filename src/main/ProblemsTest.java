@@ -146,10 +146,20 @@ public class ProblemsTest extends TestBase {
             for(int j=0;j<9;j++) board[i][j] = values[j];
         }
 //        Arrays.stream(board).toList().forEach(row -> System.out.println(Arrays.toString(row)));
-        Assertions.assertEquals(true, solveSudoku(board));
+        solveSudoku3(board);
+        Assertions.assertEquals(true,isValidSudoku(board));
     }
 
-    private boolean solveSudoku(char[][] board){
+    int charToInt(char c) {
+        return (int)c - (int)'0';
+    }
+
+    char intToChar(int i){
+        return (char)(i + (int)'0');
+    }
+
+    // around 20 ms in leetcode
+    private boolean solveSudoku2(char[][] board){
         List<Set<Character>> row_set = new ArrayList<>();
         List<Set<Character>> col_set = new ArrayList<>();
         List<List<Set<Character>>> block_set = new ArrayList<>();
@@ -175,11 +185,11 @@ public class ProblemsTest extends TestBase {
                 }
             }
         }
-        return solveSudoku3(board,0,0, row_set, col_set, block_set);
+        return solveSudoku2(board,0,0, row_set, col_set, block_set);
     }
 
 
-    public boolean solveSudoku3(char[][] board, int i, int j,
+    public boolean solveSudoku2(char[][] board, int i, int j,
                                 List<Set<Character>> row_set,
                                 List<Set<Character>> col_set,
                                 List<List<Set<Character>>> block_set) {
@@ -190,7 +200,7 @@ public class ProblemsTest extends TestBase {
             if(j==8) {
                 i+=1;j=0;
             } else j+=1;
-            return solveSudoku3(board,i,j,row_set,col_set,block_set);
+            return solveSudoku2(board,i,j,row_set,col_set,block_set);
         } else {
             List<Character> possible_vals = new ArrayList<>();
 
@@ -221,7 +231,7 @@ public class ProblemsTest extends TestBase {
 
                 board[i][j] = possible_vals.get(k);
 
-                if(!solveSudoku3(board,next_i,next_j,row_set,col_set,block_set)){
+                if(!solveSudoku2(board,next_i,next_j,row_set,col_set,block_set)){
                     row_set.get(i).remove(board[i][j]);
                     col_set.get(j).remove(board[i][j]);
                     block_set.get(i/3).get(j/3).remove(board[i][j]);
@@ -233,6 +243,67 @@ public class ProblemsTest extends TestBase {
     }
 
 
+    // same approach without using collections 3ms and beats 95% and also used less memory
+    // the least time solution is using bit operation
+    private boolean solveSudoku3(char[][] board){
 
+        boolean[][] row_set = new boolean[9][9];
+        boolean[][] col_set = new boolean[9][9];
+        boolean[][][] block_set = new boolean[3][3][9];
+
+        for(int i=0;i<9;i++) {
+            for(int j=0;j<9;j++) {
+                if(board[i][j]!='.') {
+                    row_set[i][charToInt(board[i][j])-1] = true;
+                    col_set[j][charToInt(board[i][j])-1] = true;
+                    block_set[i/3][j/3][charToInt(board[i][j])-1] = true;
+                }
+            }
+        }
+        return solveSudoku3(board,0,0, row_set, col_set, block_set);
+    }
+
+    public boolean solveSudoku3(char[][] board, int i, int j, boolean[][] row_set, boolean[][] col_set,
+                                boolean[][][] block_set) {
+        if (i == 9) {
+            Arrays.stream(board).toList().forEach(row -> println(Arrays.toString(row)));
+            return true;
+        } else if (board[i][j] != '.') {
+            if (j == 8) {
+                i += 1;
+                j = 0;
+            } else
+                j += 1;
+            return solveSudoku3(board, i, j, row_set, col_set, block_set);
+        } else {
+            int next_i, next_j;
+            if (j == 8) {
+                next_i = i + 1;
+                next_j = 0;
+            } else {
+                next_i = i;
+                next_j = j + 1;
+            }
+
+            for (int k = 1; k <= 9; k++) {
+                if (row_set[i][k - 1] == true || col_set[j][k - 1] == true || block_set[i / 3][j / 3][k - 1] == true)
+                    continue;
+                row_set[i][k - 1] = true;
+                col_set[j][k - 1] = true;
+                block_set[i / 3][j / 3][k - 1] = true;
+
+                board[i][j] = intToChar(k);
+
+                if (!solveSudoku3(board, next_i, next_j, row_set, col_set, block_set)) {
+                    row_set[i][k - 1] = false;
+                    col_set[j][k - 1] = false;
+                    block_set[i / 3][j / 3][k - 1] = false;
+                    board[i][j]='.';
+                } else
+                    return true;
+            }
+            return false;
+        }
+    }
 
 }
