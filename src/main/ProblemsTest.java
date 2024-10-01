@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.ValueSources;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -304,6 +306,76 @@ public class ProblemsTest extends TestBase {
             }
             return false;
         }
+    }
+
+
+    //https://leetcode.com/problems/count-and-say/
+    @ParameterizedTest
+    @ValueSource(ints = {30})
+    void countAndSay(int n) {
+        String s = "1";
+        StringBuffer temp = new StringBuffer();
+        int count;
+        char c;
+        for (int i = 2; i <= n; i++) {
+            count = 1;
+            c = s.charAt(0);
+            for (int k = 1; k < s.length(); k++) {
+                if (c == s.charAt(k))
+                    count++;
+                else {
+                    temp.append(count);
+                    temp.append(c);
+                    c = s.charAt(k);
+                    count = 1;
+                }
+            }
+            temp.append(count);
+            temp.append(c);
+            s = temp.toString();
+            temp = new StringBuffer();
+            System.out.println(s);
+        }
+        //return s;
+    }
+
+    //https://leetcode.com/problems/combination-sum/description/
+    @ParameterizedTest
+    @ValueSource(strings = {"7:[2,3,6,7]", "8:[2,3,5]", "1:[2]", "11:[8,7,4,3]",
+    "19:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"})
+    void combinationSum(String input) {
+        int target = Integer.parseInt(input.split(":")[0]);
+        String temp = input.split(":")[1];
+        temp = temp.substring(1, temp.length() - 1);
+        Integer[] candidatesTemp = Arrays.stream(temp.split(",")).map(Integer::parseInt).toArray(Integer[]::new);
+        int[] candidates = new int[candidatesTemp.length];
+        for (int i = 0; i < candidates.length; i++)
+            candidates[i] = candidatesTemp[i];
+        System.out.println(combinationSum(candidates, target));
+    }
+
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<Integer> path = new ArrayList<>();
+        List<List<Integer>> finalList = new ArrayList<>();
+        combinationSum(candidates,0,path, target, finalList);
+
+        return finalList;
+    }
+
+    void combinationSum(int[] ar, int index, List path, int target, List finalList) {
+        if(target == 0) {
+            finalList.add(new ArrayList<>(path));
+            return;
+        }
+
+        if(target<0) return;
+
+        if(index == ar.length) return;
+
+        path.addLast(ar[index]);
+        combinationSum(ar, index, path, target - ar[index], finalList);
+        path.remove(path.size()-1);
+        combinationSum(ar,index+1,path, target, finalList);
     }
 
 }
