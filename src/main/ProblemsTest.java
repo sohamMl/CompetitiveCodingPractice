@@ -378,4 +378,57 @@ public class ProblemsTest extends TestBase {
         combinationSum(ar,index+1,path, target, finalList);
     }
 
+
+    //https://leetcode.com/problems/combination-sum-ii/description/
+    @ParameterizedTest
+    @ValueSource(strings = {"8:[10,1,2,7,6,1,5]", "5:[2,5,2,1,2]",})
+    void combinationSum2(String input) {
+        int target = Integer.parseInt(input.split(":")[0]);
+        String temp = input.split(":")[1];
+        String[] num= temp.substring(1,temp.length()-1).split(",");
+        int[] candidates =  new int[num.length];
+        for(int i=0;i<num.length;i++) candidates[i] = Integer.parseInt(num[i]);
+        System.out.println(combinationSum2(candidates, target));
+    }
+
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        Set<List<Integer>> finalList = new HashSet<>();
+        List<Integer> path = new ArrayList<>();
+//        combinationSum2(candidates,target,0,path,finalList);
+
+        for(int i=0;i<candidates.length;i++) {
+            path.add(candidates[i]);
+            combinationSum2(candidates, target, i, path, finalList);
+            path.removeLast();
+        }
+
+        return finalList.stream().toList();
+    }
+
+    void combinationSum2(int[] candidates, int target, int index, List<Integer> path, Set finalList) {
+        println(path+"  "+ target);
+        if(target == 0) {
+            finalList.add(new ArrayList<>(path));
+            println("------------");
+            return;
+        }
+
+        if(target<0) return;
+
+//        path.add(candidates[index]);
+//        combinationSum2(candidates, target - candidates[index], index+1, path, finalList);
+//        path.removeLast();
+//        target = target + path.getLast();
+//        path.removeLast();
+//        combinationSum2(candidates,target, index+1,path,finalList);
+
+        for(int i=index+1;i<candidates.length;i++) {
+            path.add(candidates[index]);
+            combinationSum2(candidates, target - candidates[index], i, path, finalList);
+            path.removeLast();
+        }
+
+    }
+
 }
