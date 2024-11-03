@@ -1,5 +1,6 @@
 package main;
 
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,14 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.ValueSources;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 
@@ -381,54 +375,85 @@ public class ProblemsTest extends TestBase {
 
     //https://leetcode.com/problems/combination-sum-ii/description/
     @ParameterizedTest
-    @ValueSource(strings = {"8:[10,1,2,7,6,1,5]", "5:[2,5,2,1,2]",})
+    @ValueSource(strings = {"8:[10,1,2,7,6,1,5]", "5:[2,5,2,1,2]",
+            "30:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]"})
     void combinationSum2(String input) {
         int target = Integer.parseInt(input.split(":")[0]);
         String temp = input.split(":")[1];
-        String[] num= temp.substring(1,temp.length()-1).split(",");
-        int[] candidates =  new int[num.length];
-        for(int i=0;i<num.length;i++) candidates[i] = Integer.parseInt(num[i]);
-        System.out.println(combinationSum2(candidates, target));
+        String[] num = temp.substring(1, temp.length() - 1).split(",");
+        int[] candidates = new int[num.length];
+        for (int i = 0; i < num.length; i++) candidates[i] = Integer.parseInt(num[i]);
+        //System.out.println(combinationSum2(candidates, target));
+        println(combinationSum2Repeating(candidates, target));
     }
 
+    //This works great with unique numbers in the list, repeating numbers wastes time
     public List<List<Integer>> combinationSum2(int[] candidates, int target) {
         Arrays.sort(candidates);
         Set<List<Integer>> finalList = new HashSet<>();
-        List<Integer> path = new ArrayList<>();
-//        combinationSum2(candidates,target,0,path,finalList);
-
-        for(int i=0;i<candidates.length;i++) {
-            path.add(candidates[i]);
-            combinationSum2(candidates, target, i, path, finalList);
-            path.removeLast();
+        for (int i = 0; i < candidates.length; i++) {
+            List<Integer> nums = new ArrayList<>();
+            nums.addLast(candidates[i]);
+            combinationSum2(i, target - candidates[i], candidates, nums, finalList);
         }
 
         return finalList.stream().toList();
     }
 
-    void combinationSum2(int[] candidates, int target, int index, List<Integer> path, Set finalList) {
-        println(path+"  "+ target);
-        if(target == 0) {
-            finalList.add(new ArrayList<>(path));
-            println("------------");
-            return;
+    public void combinationSum2(int k, int target, int[] candidates, List<Integer> nums, Set<List<Integer>> finalList) {
+        if (target == 0) {
+            finalList.add(new ArrayList<>(nums));
+        } else if (target > 0) {
+            for (int i = k + 1; i < candidates.length; i++) {
+                nums.addLast(candidates[i]);
+                combinationSum2(i, target - candidates[i], candidates, nums, finalList);
+                nums.removeLast();
+            }
         }
-
-        if(target<0) return;
-
-//        path.add(candidates[index]);
-//        combinationSum2(candidates, target - candidates[index], index+1, path, finalList);
-//        path.removeLast();
-//        target = target + path.getLast();
-//        path.removeLast();
-//        combinationSum2(candidates,target, index+1,path,finalList);
-
-        for(int i=index+1;i<candidates.length;i++) {
-            path.add(candidates[index]);
-            combinationSum2(candidates, target - candidates[index], i, path, finalList);
-            path.removeLast();
-        }
-
     }
 
+    public List<List<Integer>> combinationSum2Repeating(int[] candidates, int target) {
+        Map<Integer, Integer> numCountMap = new HashMap<>();
+        List<Integer> numKeys = new ArrayList<>();
+        List<List<Integer>> finalList = new ArrayList<>();
+        Arrays.stream(candidates).forEach(num -> {
+            if (numCountMap.containsKey(num)) numCountMap.put(num, numCountMap.get(num) + 1);
+            else {
+                numCountMap.put(num, 1);
+                numKeys.add(num);
+            }
+        });
+
+        for (int i = 0; i < numKeys.size(); i++) {
+            Map<Integer, Integer> numkeysTempMap = new HashMap<>();
+            numKeys.forEach(n -> numkeysTempMap.put(n, 0));
+            numkeysTempMap.put(0, target);
+            combinationSum2Repeating(i, numKeys, numkeysTempMap, numCountMap, finalList);
+        }
+
+        return finalList;
+    }
+
+    public void combinationSum2Repeating(int i, List<Integer> numKeys, Map<Integer, Integer> numkeysMap,
+                                         Map<Integer, Integer> numCountMap, List<List<Integer>> finalList) {
+        if (numkeysMap.get(0) == 0) {
+            //add to final list
+            List<Integer> list = new ArrayList<>();
+            for (var e : numkeysMap.entrySet()) {
+                for (int j = 0; j < e.getValue(); j++) list.add(e.getKey());
+            }
+            finalList.add(list);
+        } else if (numkeysMap.get(0) > 0) {
+            for (int j = i; j < numKeys.size(); j++) {
+                int key = numKeys.get(j);
+                if (numkeysMap.get(key) + 1 <= numCountMap.get(key)) {
+                    numkeysMap.put(key, numkeysMap.get(key) + 1);
+                    numkeysMap.put(0, numkeysMap.get(0) - key);
+                    combinationSum2Repeating(j, numKeys, numkeysMap, numCountMap, finalList);
+                    numkeysMap.put(key, numkeysMap.get(key) - 1);
+                    numkeysMap.put(0, numkeysMap.get(0) + key);
+                }
+            }
+        }
+    }
 }
