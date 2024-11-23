@@ -406,48 +406,95 @@ public class ProblemsTest extends TestBase {
         }
     }
 
-    public List<List<Integer>> combinationSum2Repeating(int[] candidates, int target) {
-        Map<Integer, Integer> numCountMap = new HashMap<>();
-        List<Integer> numKeys = new ArrayList<>();
+    public List<List<Integer>> combinationSum2Repeating(int[] candidateList, int target) {
         List<List<Integer>> finalList = new ArrayList<>();
-        Arrays.stream(candidates).forEach(num -> {
-            if (numCountMap.containsKey(num)) numCountMap.put(num, numCountMap.get(num) + 1);
-            else {
-                numCountMap.put(num, 1);
-                numKeys.add(num);
-            }
-        });
+        Map<Integer,Integer> countMap = new HashMap<>();
+        Map<Integer,Integer> trackerMap = new HashMap<>();
 
-        for (int i = 0; i < numKeys.size(); i++) {
-            Map<Integer, Integer> numkeysTempMap = new HashMap<>();
-            numKeys.forEach(n -> numkeysTempMap.put(n, 0));
-            numkeysTempMap.put(0, target);
-            combinationSum2Repeating(i, numKeys, numkeysTempMap, numCountMap, finalList);
+        for(int i : candidateList) {
+            if(countMap.containsKey(i)) countMap.put(i, countMap.get(i)+1);
+            else {
+                countMap.put(i,1);
+                trackerMap.put(i,0);
+            }
+
+        }
+
+        int[] candidate = new int[countMap.size()];
+        int[] candidateFreq = new int[countMap.size()];
+
+        int k = 0;
+        for(Map.Entry<Integer,Integer> e : countMap.entrySet()) {
+            candidate[k] = e.getKey();
+            candidateFreq[k] = e.getValue();
+            k++;
+        }
+
+        for(int i=0;i<candidate.length;i++) {
+            trackerMap.put(candidate[i],trackerMap.get(candidate[i])+1);
+            candidateFreq[i]--;
+            combinationSum2Repeating(i,target - candidate[i], trackerMap, candidate, candidateFreq, finalList);
+            candidateFreq[i]++;
+            trackerMap.put(candidate[i],trackerMap.get(candidate[i])-1);
         }
 
         return finalList;
     }
 
-    public void combinationSum2Repeating(int i, List<Integer> numKeys, Map<Integer, Integer> numkeysMap,
-                                         Map<Integer, Integer> numCountMap, List<List<Integer>> finalList) {
-        if (numkeysMap.get(0) == 0) {
-            //add to final list
-            List<Integer> list = new ArrayList<>();
-            for (var e : numkeysMap.entrySet()) {
-                for (int j = 0; j < e.getValue(); j++) list.add(e.getKey());
-            }
-            finalList.add(list);
-        } else if (numkeysMap.get(0) > 0) {
-            for (int j = i; j < numKeys.size(); j++) {
-                int key = numKeys.get(j);
-                if (numkeysMap.get(key) + 1 <= numCountMap.get(key)) {
-                    numkeysMap.put(key, numkeysMap.get(key) + 1);
-                    numkeysMap.put(0, numkeysMap.get(0) - key);
-                    combinationSum2Repeating(j, numKeys, numkeysMap, numCountMap, finalList);
-                    numkeysMap.put(key, numkeysMap.get(key) - 1);
-                    numkeysMap.put(0, numkeysMap.get(0) + key);
+    private void combinationSum2Repeating(int i, int target, Map<Integer, Integer> trackerMap, int[] candidate, int[] candidateFreq, List<List<Integer>> finalList) {
+        if(target>0) {
+            if(candidateFreq[i]>0) {
+                for(int j=i;j<candidate.length;j++) {
+                    trackerMap.put(candidate[j],trackerMap.get(candidate[j])+1);
+                    candidateFreq[j]--;
+                    combinationSum2Repeating(j,target - candidate[j], trackerMap, candidate, candidateFreq, finalList);
+                    candidateFreq[j]++;
+                    trackerMap.put(candidate[j],trackerMap.get(candidate[j])-1);
+                }
+            } else {
+                for(int j=i+1;j<candidate.length;j++) {
+                    trackerMap.put(candidate[j],trackerMap.get(candidate[j])+1);
+                    candidateFreq[j]--;
+                    combinationSum2Repeating(j,target - candidate[j], trackerMap, candidate, candidateFreq, finalList);
+                    candidateFreq[j]++;
+                    trackerMap.put(candidate[j],trackerMap.get(candidate[j])-1);
                 }
             }
+        } else if(target == 0) {
+            List<Integer> list = new ArrayList<>();
+            for (Map.Entry<Integer, Integer> e: trackerMap.entrySet()) {
+                for(int k=0;k<e.getValue();k++) {
+                    list.add(e.getKey());
+                }
+            }
+            finalList.add(list);
         }
     }
+
+    public void solve(int[] candidates, int target,int idx, List<Integer> temp, List<List<Integer>> res, int sum) {
+        if (idx > candidates.length || sum > target) {
+            return;
+        }
+        if(sum == target) {
+            res.add(new ArrayList<>(temp));
+            return;
+        }
+        for (int j = idx; j < candidates.length; j++) {
+            if (j > idx && candidates[j] == candidates[j-1]) continue;
+            temp.add(candidates[j]);
+            solve(candidates, target, j+1, temp, res, sum+candidates[j]);
+            temp.remove(temp.size()-1);
+        }
+
+        return;
+    }
+
+    //much more elegant solution
+    public List<List<Integer>> combinationSum2FROMleetcode(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        Arrays.sort(candidates);
+        solve(candidates, target, 0, new ArrayList<>(), res, 0);
+        return res;
+    }
+
 }
