@@ -497,4 +497,33 @@ public class ProblemsTest extends TestBase {
         return res;
     }
 
+
+    //https://leetcode.com/problems/first-missing-positive/
+    @ParameterizedTest
+    @ValueSource(strings = {"3|[1,2,0]", "2|[3,4,-1,1]", "1|[7,8,9,11,12]", "2|[1,1]"})
+    void firstMissingPositive(String data) {
+        int expected = Integer.parseInt(data.split("\\|")[0]);
+        String[] s = data.substring(3,data.length()-1).split(",");
+        int[] nums = new int[s.length];
+        for(int i=0;i<s.length;i++) nums[i] = Integer.parseInt(s[i]);
+        Assertions.assertEquals(expected, firstMissingPositive(nums));
+    }
+
+    public int firstMissingPositive(int[] nums) {
+        int i=0;
+        while(i<nums.length){
+            int index = nums[i]-1;
+            if(nums[i]>=1 && nums[i]<=nums.length && index != i && nums[index] != nums[i]) {
+                int temp = nums[index];
+                nums[index] = nums[i];
+                nums[i] = temp;
+            } else i++;
+        }
+
+        for(i=0;i<nums.length;i++) {
+            if(nums[i] != i+1) break;
+        }
+        return i+1;
+    }
+
 }
