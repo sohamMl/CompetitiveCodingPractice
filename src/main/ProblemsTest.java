@@ -1,6 +1,7 @@
 package main;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.*;
@@ -525,5 +526,67 @@ public class ProblemsTest extends TestBase {
         }
         return i+1;
     }
+
+    //https://leetcode.com/problems/multiply-strings/
+    @ParameterizedTest
+    @ValueSource(strings = {"56088:123,456", "882:98,9", "121932631112635269:123456789,987654321", "0:324,0"})
+    void multiply(String data) {
+        String answer = data.split(":")[0];
+        String num1 = data.split(":")[1].split(",")[0];
+        String num2 = data.split(":")[1].split(",")[1];
+        System.out.println(String.format("%s %s %s", answer, num1, num2));
+        Assertions.assertEquals(answer, multiply(num1,num2));
+    }
+
+
+    String multiply(String n1, String n2) {
+        if(n1.equals("0") || n2.equals("0")) return "0";
+        String sum="", tempSum="";
+        //  n1
+        //* n2
+        //------
+        // prod
+        for(int i=n2.length()-1,j=0;i>=0;i--,j++) {
+            tempSum = multiply(n1, n2.charAt(i) - 48, j);
+            sum = add(tempSum, sum);
+        }
+
+        return sum;
+    }
+
+    String multiply(String num, int digit, int baseMultiplier) {
+        int carryForward = 0, prod;
+        StringBuilder result = new StringBuilder();
+        for(int i=num.length()-1;i>=0;i--) {
+            prod = (num.charAt(i) - 48) * digit;
+            prod += carryForward;
+            result.insert(0,prod%10);
+            carryForward=prod/10;
+        }
+        if(carryForward>0) result.insert(0,carryForward);
+
+        result.append("0".repeat(Math.max(0, baseMultiplier)));
+        return result.toString();
+    }
+
+    String add(String n1, String n2) {
+        int len = Math.max(n1.length(), n2.length())-1;
+        int a,b,carryForward = 0, tempSum;
+        StringBuilder sum = new StringBuilder();
+
+        for(int i=n1.length()-1, j=n2.length()-1;len>=0;len--,i--,j--) {
+            a = i<n1.length() && i>=0? n1.charAt(i) - 48 : 0;
+            b = j<n2.length() && j>=0? n2.charAt(j) - 48 : 0;
+            tempSum = a+b+carryForward;
+            sum.insert(0, (tempSum)%10);
+            carryForward = tempSum/10;
+        }
+
+        if (carryForward>0) sum.insert(0,carryForward);
+        return sum.toString();
+    }
+
+
+
 
 }
