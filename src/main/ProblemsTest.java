@@ -587,6 +587,45 @@ public class ProblemsTest extends TestBase {
     }
 
 
+    //https://leetcode.com/problems/trapping-rain-water/
+    @ParameterizedTest
+    @ValueSource(strings = {"0,1,0,2,1,0,1,3,2,1,2,1:6", "4,2,0,3,2,5:9"})
+    void trap(String data) {
+        String[] heightStr = data.split(":")[0].split(",");
+        int output = Integer.parseInt(data.split(":")[1]);
+        int[] height = new int[heightStr.length];
+        for (int i = 0; i < heightStr.length; i++) {height[i] = Integer.parseInt(heightStr[i]);}
+
+        Assertions.assertEquals(output, trap(height));
+    }
+
+    int trap(int[] height) {
+        if (height == null || height.length < 3) return 0; // Need at least 3 bars to trap water
+
+        int sum = 0;
+        int n = height.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+
+        // prepare left array: stores the max height encountered from the left up to i
+        left[0] = height[0];
+        for (int i = 1; i < n; i++) {
+            left[i] = Math.max(height[i], left[i - 1]);
+        }
+
+        // prepare right array: stores the max height encountered from the right up to i
+        right[n - 1] = height[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            right[i] = Math.max(height[i], right[i + 1]);
+        }
+
+        // Calculate water: min(tallest_left, tallest_right) - current_height
+        for (int i = 0; i < n; i++) {
+            sum += Math.min(left[i], right[i]) - height[i];
+        }
+
+        return sum;
+    }
 
 
 }
