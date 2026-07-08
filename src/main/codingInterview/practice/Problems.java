@@ -206,4 +206,86 @@ public class Problems extends TestBase {
         return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
     }
 
+
+
+    @ParameterizedTest(name = "{2}")
+    @CsvSource(value = {
+            "'', '', 'Empty array'",
+            "'0', '0', 'One 0'",
+            "'1', '1', 'One 1'",
+            "'0,0,0', '0,0,0', 'All 0s'",
+            "'1,3,2', '1,3,2', 'All non-zeros'",
+            "'1,1,1,0,0', '1,1,1,0,0', 'All zeros already at the end'",
+            "'0,0,1,1,1', '1,1,1,0,0', 'All zeros at the start'",
+            "'1, 0, 3, 0, 2', '1,3,2,0,0', 'All zeros at the end'"
+    })
+    void testShiftZerosToTheEnd(String inputStr, String expectedStr, String description) {
+        // Parse CSV string into int[]
+        int[] nums = parseCsvLine(inputStr);
+        int[] expected = parseCsvLine(expectedStr);
+
+        // Invoke the actual method
+        shiftZerosToTheEnd(nums);
+
+        System.out.println(expectedStr + " - " + Arrays.toString(nums));
+
+        // Assert the modified array matches the expected output
+        Assertions.assertArrayEquals(expected, nums, "Failed: " + description);
+    }
+
+    private int[] parseCsvLine(String csvLine) {
+        if (csvLine == null || csvLine.trim().isEmpty()) {
+            return new int[0];
+        }
+        return Arrays.stream(csvLine.split(","))
+                .map(String::trim)
+                .mapToInt(Integer::parseInt)
+                .toArray();
+    }
+
+    //my solution
+    void shiftZerosToTheEnd(int[] nums) {
+        if (nums.length > 1) {
+            int left = 0;
+            while(left<nums.length && nums[left]!=0) left++;
+
+            int right = left+1;
+            while(right<nums.length) {
+                if(nums[right]!=0) {
+                    nums[left] = nums[right];
+                    nums[right] = 0;
+                    left++;
+                }
+                right++;
+            }
+
+        }
+
+    }
+
+    //byte byte go solution
+    void shiftZerosToTheEnd2(int[] nums) {
+        if (nums == null || nums.length <= 1) {
+            return;
+        }
+
+        // The 'left' pointer is used to position non-zero elements.
+        int left = 0;
+
+        // Iterate through the array using a 'right' pointer to locate non-zero elements.
+        for (int right = 0; right < nums.length; right++) {
+            if (nums[right] != 0) {
+                if (right != left) {
+                    // Swap nums[left] and nums[right]
+                    int temp = nums[left];
+                    nums[left] = nums[right];
+                    nums[right] = temp;
+                }
+                // Increment 'left' since it now points to a position already occupied
+                // by a non-zero element.
+                left++;
+            }
+        }
+    }
+
 }
