@@ -3,6 +3,7 @@ package main.codingInterview.practice;
 import main.TestBase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 
@@ -165,6 +166,44 @@ public class Problems extends TestBase {
         }
 
         return pairs;
+    }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "'', true",
+            "'a', true",
+            "'aa', true",
+            "'ab', false",
+            "'!, (?)', true",
+            "'12.02.2021', true",
+            "'21.02.2021', false",
+            "'hello, world!', false"
+    })
+    void testIsPalindromeValid(String input, boolean expected) {
+        Assertions.assertEquals(expected, isPalindromeValid(input));
+    }
+
+    boolean isPalindromeValid(String input) {
+        int left = 0, right = input.length() - 1;
+        while (left < right) {
+            while (left < right && !isAlphanumeric(input.charAt(left))) { left++; }
+            while (left < right && !isAlphanumeric(input.charAt(right))) { right--; }
+
+            // Normalize characters to lowercase before comparing
+            char leftChar = Character.toLowerCase(input.charAt(left));
+            char rightChar = Character.toLowerCase(input.charAt(right));
+
+            if (leftChar != rightChar) return false;
+
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    boolean isAlphanumeric(char ch) {
+        return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
     }
 
 }
