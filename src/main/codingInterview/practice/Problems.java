@@ -288,4 +288,105 @@ public class Problems extends TestBase {
         }
     }
 
+
+
+    @ParameterizedTest(name = "Heights: {0} -> Expected: {1}")
+    @CsvSource(delimiter = ':', value = {
+            "2,7,8,3,7,6 : 24",
+            "3,3,3,3     : 9",
+            "1,2,3       : 2",
+            "3,2,1       : 2",
+            "0,1,0       : 0",
+            "1           : 0"
+    })
+    public void testLargestContainer(String inputStr, int expectedOutput) {
+        int[] heights = Arrays.stream(inputStr.split(","))
+                .map(String::trim)
+                .mapToInt(Integer::parseInt)
+                .toArray();
+
+        int actualOutput = computeLargestContainer(heights);
+        Assertions.assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
+    }
+
+    // --- Method 2: Problem Logic (Two-Pointer Approach) ---
+    private int computeLargestContainer(int[] heights) {
+        if (heights == null || heights.length < 2) {
+            return 0;
+        }
+
+        int maxWater = 0;
+        int left = 0;
+        int right = heights.length - 1;
+
+        while (left < right) {
+            int width = right - left;
+            int currentWater = Math.min(heights[left], heights[right]) * width;
+            maxWater = Math.max(maxWater, currentWater);
+
+            if (heights[left] < heights[right]) {
+                left++;
+            } else if (heights[left] > heights[right]) {
+                right--;
+            } else {
+                left++;
+                right--;
+            }
+        }
+
+        return maxWater;
+    }
+
+
+
+    @ParameterizedTest(name = "Heights: {0} -> Expected: {1}")
+    @CsvSource(delimiter = ':', value = {
+            "0,1,0,2,1,0,1,3,2,1,2,1 : 6",
+            "4,2,0,3,2,5             : 9",
+            "3,3,3,3                 : 0",
+            "1,2,3,4                 : 0",
+            "1                       : 0"
+    })
+    public void testTrappingRainWater(String inputStr, int expectedOutput) {
+        int[] heights = Arrays.stream(inputStr.split(","))
+                .map(String::trim)
+                .mapToInt(Integer::parseInt)
+                .toArray();
+
+        int actualOutput = computeTrappedWater(heights);
+        Assertions.assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
+    }
+
+    // --- Method 2: Problem Logic (Two-Pointer Approach) ---
+    private int computeTrappedWater(int[] heights) {
+        if (heights == null || heights.length < 3) {
+            return 0;
+        }
+
+        int left = 0;
+        int right = heights.length - 1;
+        int leftMax = 0;
+        int rightMax = 0;
+        int totalWater = 0;
+
+        while (left < right) {
+            if (heights[left] < heights[right]) {
+                if (heights[left] >= leftMax) {
+                    leftMax = heights[left];
+                } else {
+                    totalWater += leftMax - heights[left];
+                }
+                left++;
+            } else {
+                if (heights[right] >= rightMax) {
+                    rightMax = heights[right];
+                } else {
+                    totalWater += rightMax - heights[right];
+                }
+                right--;
+            }
+        }
+
+        return totalWater;
+    }
 }
