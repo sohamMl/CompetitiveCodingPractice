@@ -73,4 +73,108 @@ public class ProblemData {
                 }, false)
         );
     }
+
+
+
+    public static Stream<Arguments> zeroStripingData() {
+        return Stream.of(
+                // Standard Example 1: Basic submatrix zeroing
+                Arguments.of(
+                        new int[][]{
+                                {1, 1, 1},
+                                {1, 0, 1},
+                                {1, 1, 1}
+                        },
+                        new int[][]{
+                                {1, 0, 1},
+                                {0, 0, 0},
+                                {1, 0, 1}
+                        }
+                ),
+                // Standard Example 2: Multiple zeros affecting same rows/cols
+                Arguments.of(
+                        new int[][]{
+                                {0, 1, 2, 0},
+                                {3, 4, 5, 2},
+                                {1, 3, 1, 5}
+                        },
+                        new int[][]{
+                                {0, 0, 0, 0},
+                                {0, 4, 5, 0},
+                                {0, 3, 1, 0}
+                        }
+                ),
+                // Edge Case: Zero originally present in the first row only
+                Arguments.of(
+                        new int[][]{
+                                {1, 0, 3},
+                                {4, 5, 6},
+                                {7, 8, 9}
+                        },
+                        new int[][]{
+                                {0, 0, 0},
+                                {4, 0, 6},
+                                {7, 0, 9}
+                        }
+                ),
+                // Edge Case: Zero originally present in the first column only
+                Arguments.of(
+                        new int[][]{
+                                {1, 2, 3},
+                                {0, 5, 6},
+                                {7, 8, 9}
+                        },
+                        new int[][]{
+                                {0, 2, 3},
+                                {0, 0, 0},
+                                {0, 8, 9}
+                        }
+                ),
+                // Edge Case: Zero at origin matrix[0][0] (both first row and first col)
+                Arguments.of(
+                        new int[][]{
+                                {0, 2, 3},
+                                {4, 5, 6},
+                                {7, 8, 9}
+                        },
+                        new int[][]{
+                                {0, 0, 0},
+                                {0, 5, 6},
+                                {0, 8, 9}
+                        }
+                ),
+                // Edge Case: 1x1 Matrix with a zero
+                Arguments.of(
+                        new int[][]{{0}},
+                        new int[][]{{0}}
+                ),
+                // Edge Case: 1x1 Matrix without a zero
+                Arguments.of(
+                        new int[][]{{5}},
+                        new int[][]{{5}}
+                ),
+                // Edge Case: No zeros present in the entire matrix
+                Arguments.of(
+                        new int[][]{
+                                {1, 2},
+                                {3, 4}
+                        },
+                        new int[][]{
+                                {1, 2},
+                                {3, 4}
+                        }
+                ),
+                // Edge Case: Entire matrix filled with zeros
+                Arguments.of(
+                        new int[][]{
+                                {0, 0},
+                                {0, 0}
+                        },
+                        new int[][]{
+                                {0, 0},
+                                {0, 0}
+                        }
+                )
+        );
+    }
 }

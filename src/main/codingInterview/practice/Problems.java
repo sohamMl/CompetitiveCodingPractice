@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 public class Problems extends TestBase {
 
 
@@ -230,7 +232,7 @@ public class Problems extends TestBase {
         System.out.println(expectedStr + " - " + Arrays.toString(nums));
 
         // Assert the modified array matches the expected output
-        Assertions.assertArrayEquals(expected, nums, "Failed: " + description);
+        assertArrayEquals(expected, nums, "Failed: " + description);
     }
 
     private int[] parseCsvLine(String csvLine) {
@@ -464,7 +466,7 @@ public class Problems extends TestBase {
         java.util.Arrays.sort(actual);
         java.util.Arrays.sort(expected);
 
-        Assertions.assertArrayEquals(expected, actual);
+        assertArrayEquals(expected, actual);
     }
 
     public int[] pairSumUnsorted(int[] nums, int target) {
@@ -522,6 +524,60 @@ public class Problems extends TestBase {
 
         return true;
     }
+
+
+
+
+    @ParameterizedTest
+    @MethodSource("main.codingInterview.practice.ProblemData#zeroStripingData")
+    void testZeroStriping(int[][] matrix, int[][] expected) {
+        zeroStriping(matrix);
+        assertArrayEquals(expected, matrix);
+    }
+
+    public void zeroStriping(int[][] matrix) {
+        boolean row_contains_zeroes = false;
+        boolean col_contains_zeroes = false;
+
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+
+        for(int i = 0; i < cols; i++) {
+            if(matrix[0][i] == 0) row_contains_zeroes = true;
+        }
+
+        for(int i = 0; i < rows; i++) {
+            if(matrix[i][0] == 0) col_contains_zeroes = true;
+        }
+
+        //create markers
+        for(int i = 1; i < rows; i++) {
+            for(int j = 1; j < cols; j++) {
+                if(matrix[i][j] == 0) {
+                    matrix[0][j] = 0;
+                    matrix[i][0] = 0;
+                }
+            }
+        }
+
+        //use markers to fill zeros
+        for(int i = 1; i < rows; i++) {
+            for(int j = 1; j < cols; j++) {
+                if(matrix[i][0] == 0 || matrix[0][j] == 0) matrix[i][j] = 0;
+            }
+        }
+
+        if (row_contains_zeroes) {
+            for(int i = 0; i < cols; i++) matrix[0][i] = 0;
+        }
+
+        if (col_contains_zeroes) {
+            for(int i = 0; i < rows; i++) matrix[i][0] = 0;
+        }
+
+    }
+
+
 
 
 
