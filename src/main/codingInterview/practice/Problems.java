@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Problems extends TestBase {
 
@@ -42,7 +43,7 @@ public class Problems extends TestBase {
         // Assertions that safely handle cases returning nothing
         if (!pair.isEmpty()) {
             System.out.printf("pair: %s - %d,%d %n", pair, nums[pair.get(0)], nums[pair.get(1)]);
-            Assertions.assertEquals(target, nums[pair.get(0)] + nums[pair.get(1)]);
+            assertEquals(target, nums[pair.get(0)] + nums[pair.get(1)]);
         } else {
             System.out.printf("No matching pair found for target %d %n", target);
             Assertions.assertTrue(pair.isEmpty());
@@ -123,8 +124,8 @@ public class Problems extends TestBase {
 
         // 2. Verify all found triplets sum to 0
         tripletList.forEach(triplet -> {
-            Assertions.assertEquals(3, triplet.size(), "Triplet must contain exactly 3 elements");
-            Assertions.assertEquals(0, triplet.get(0) + triplet.get(1) + triplet.get(2),
+            assertEquals(3, triplet.size(), "Triplet must contain exactly 3 elements");
+            assertEquals(0, triplet.get(0) + triplet.get(1) + triplet.get(2),
                     "Elements " + triplet + " do not sum to 0");
         });
     }
@@ -183,7 +184,7 @@ public class Problems extends TestBase {
             "'hello, world!', false"
     })
     void testIsPalindromeValid(String input, boolean expected) {
-        Assertions.assertEquals(expected, isPalindromeValid(input));
+        assertEquals(expected, isPalindromeValid(input));
     }
 
     boolean isPalindromeValid(String input) {
@@ -308,7 +309,7 @@ public class Problems extends TestBase {
                 .toArray();
 
         int actualOutput = computeLargestContainer(heights);
-        Assertions.assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
+        assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
     }
 
     // --- Method 2: Problem Logic (Two-Pointer Approach) ---
@@ -356,7 +357,7 @@ public class Problems extends TestBase {
                 .toArray();
 
         int actualOutput = computeTrappedWater(heights);
-        Assertions.assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
+        assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
     }
 
     // --- Method 2: Problem Logic (Two-Pointer Approach) ---
@@ -405,7 +406,7 @@ public class Problems extends TestBase {
             "'fedcb', 'bcdef'"
     })
     void testNextLexicographicalSequence(String input, String expected) {
-        Assertions.assertEquals(expected, nextLexicographicalSequence(input));
+        assertEquals(expected, nextLexicographicalSequence(input));
     }
 
     public String nextLexicographicalSequence(String s) {
@@ -487,7 +488,7 @@ public class Problems extends TestBase {
     @MethodSource("main.codingInterview.practice.ProblemData#sudokuTestData")
     void verifySudokuBoard_ShouldReturnExpectedValidity(int[][] board, boolean expected) {
         // Act & Assert
-        Assertions.assertEquals(expected, verifySudokuBoard(board));
+        assertEquals(expected, verifySudokuBoard(board));
     }
 
     public boolean verifySudokuBoard(int[][] board) {
@@ -579,6 +580,48 @@ public class Problems extends TestBase {
 
 
 
+    @ParameterizedTest
+    @CsvSource({
+            // format: "arrayElements separated by space | expectedOutput"
+            "'1 6 2 5 8 7 10 3', 4",  // Sample example
+            "'', 0",                 // Empty array
+            "'5', 1",                // Single element
+            "'1 2 3 4 5', 5",        // All consecutive
+            "'10 20 30 40', 1",      // No consecutive elements
+            "'1 2 2 3 4', 4",        // Duplicates within the chain
+            "'0 -1 -2 -3 1 2', 6",   // Negative numbers
+            "'2147483646 2147483647', 2" // Integer boundaries
+    })
+    void testLongestChainOfConsecutiveNumbers(String numsInput, int expected) {
+        int[] nums = numsInput == null || numsInput.trim().isEmpty()
+                ? new int[0]
+                : Arrays.stream(numsInput.split(" ")).mapToInt(Integer::parseInt).toArray();
+
+        assertEquals(expected, longestChainOfConsecutiveNumbers(nums));
+    }
+
+    public int longestChainOfConsecutiveNumbers(int[] nums) {
+        int longest_chain = 0;
+
+        HashSet<Integer> numSet = new HashSet<>();
+        Arrays.stream(nums).forEach(numSet::add);
+
+        for (int num : numSet) {
+            if(!numSet.contains(num-1)) {
+                int current_chain_length = 1;
+
+                int current_num = num;
+                while(numSet.contains(current_num + 1)) {
+                    current_chain_length++;
+                    current_num++;
+                }
+
+                longest_chain = Math.max(longest_chain, current_chain_length);
+            }
+        }
+
+        return longest_chain;
+    }
 
 
 }
