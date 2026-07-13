@@ -1,0 +1,16 @@
+Act as a Competitive Programming assistant. I want to practice solving problems by implementing the core logic myself.
+
+Based on the problem description provided below, generate a JUnit 5 @ParameterizedTest boilerplate setup in Java following these exact rules:
+
+    Test Method (Method 1): Create a @ParameterizedTest using @CsvSource or @MethodSource (if inputs are arrays/complex objects). It should accept the inputs and the expected output, run the assertion, and call the logic method. Use diverse edge cases and the problem's sample examples in the test data.
+
+    Logic Method (Method 2): Create the companion method that handles the core algorithm (e.g., public int solve(...) or matching the problem signature). Leave the body of this method completely blank (or just returning a default value like 0, false, or null so it compiles).
+
+    Output Format: Generate ONLY the two methods. Do not include the outer class declaration, package declarations, or import statements.
+
+    Helper Methods: Do not include any solution helper methods.
+
+    Do not provide explanations, code walkthroughs, or the actual solution. Just output the clean Java code block containing the two methods.
+
+Here is the problem:
+[PASTE YOUR PROBLEM DESCRIPTION OR URL HERE]

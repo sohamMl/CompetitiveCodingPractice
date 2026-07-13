@@ -2,6 +2,7 @@ package main.codingInterview.practice;
 
 import main.TestBase;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -389,4 +390,59 @@ public class Problems extends TestBase {
 
         return totalWater;
     }
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "'abcd', 'abdc'",
+            "'dcba', 'abcd'",
+            "'a', 'a'",
+            "'aaaa', 'aaaa'",
+            "'ynitsed', 'ynsdeit'",
+            "'ab', 'ba'",
+            "'ba', 'ab'",
+            "'fedcb', 'bcdef'"
+    })
+    void testNextLexicographicalSequence(String input, String expected) {
+        Assertions.assertEquals(expected, nextLexicographicalSequence(input));
+    }
+
+    public String nextLexicographicalSequence(String s) {
+        char[] chars = s.toCharArray();
+
+        if (chars.length < 2) return s;
+
+        int pivot = s.length() - 2;
+
+        while(pivot>=0 && chars[pivot]>=chars[pivot+1]) pivot--;
+
+        if(pivot<0) return new String(reverseArray(chars, 0, chars.length-1));
+
+        int nextBiggestNumber = chars.length - 1;
+
+        while(chars[nextBiggestNumber] <= chars[pivot]) nextBiggestNumber--;
+
+        char temp = chars[nextBiggestNumber];
+        chars[nextBiggestNumber] = chars[pivot];
+        chars[pivot] = temp;
+
+        return new String(reverseArray(chars, pivot + 1, chars.length-1));
+    }
+
+    public char[] reverseArray(char[] chars, int start, int end) {
+        while (start < end) {
+            char temp = chars[start];
+            chars[start] = chars[end];
+            chars[end] = temp;
+            start++;end--;
+        }
+        return chars;
+    }
+
+    @Test
+    public void test() {
+        System.out.println(Arrays.toString(reverseArray("0123456789".toCharArray(),3,7)));
+    }
+
+
 }
