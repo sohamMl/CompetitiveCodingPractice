@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Problems extends TestBase {
@@ -439,10 +440,45 @@ public class Problems extends TestBase {
         return chars;
     }
 
-    @Test
-    public void test() {
-        System.out.println(Arrays.toString(reverseArray("0123456789".toCharArray(),3,7)));
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "'-1,3,4,2', 3, '0,2'",    // Sample Example
+            "'2,7,11,15', 9, '0,1'",   // Basic case
+            "'1,2,3', 7, ''",          // No pair found
+            "'3,4,3', 6, '0,2'",       // Duplicate values forming target
+            "'3,3,3,5', 8, '2,3'",     // Multiple of the same digits
+            "'-5,-2,-3,1', -7, '0,1'", // Negative numbers
+            "'5,-5,2,3', 0, '0,1'",    // Target is zero
+            "'', 5, ''"                // Empty array
+    })
+    void testPairSumUnsorted(String numsStr, int target, String expectedStr) {
+        int[] nums = numsStr == null || numsStr.isEmpty() ? new int[0] :
+                java.util.Arrays.stream(numsStr.split(",")).mapToInt(Integer::parseInt).toArray();
+
+        int[] expected = expectedStr == null || expectedStr.isEmpty() ? new int[0] :
+                java.util.Arrays.stream(expectedStr.split(",")).mapToInt(Integer::parseInt).toArray();
+
+        int[] actual = pairSumUnsorted(nums, target);
+
+        java.util.Arrays.sort(actual);
+        java.util.Arrays.sort(expected);
+
+        Assertions.assertArrayEquals(expected, actual);
     }
 
+    public int[] pairSumUnsorted(int[] nums, int target) {
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i])) {
+                return new int[]{map.get(target - nums[i]), i};
+            }
+            map.put(nums[i], i);
+        }
+
+        return new int[0];
+    }
 
 }
