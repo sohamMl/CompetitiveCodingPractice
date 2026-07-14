@@ -717,5 +717,64 @@ public class Problems extends TestBase {
         return prev;
     }
 
+    /*
+    ## Problem Statement: Remove the Kth Last Node From a Linked List
+
+    Given a singly linked list and an integer `k`, remove the `k`-th node from the end of the list and return its head.
+
+    ### Constraints & Edge Cases to Consider
+
+    * `k` is guaranteed to be a valid size (between 1 and the length of the list).
+    * The head of the list could be removed (e.g. removing the size-th node from end).
+    * The list can have only one element.
+
+    ### Examples
+
+    * **Input:** `head = [1, 2, 3, 4, 5]`, `k = 2`
+      **Output:** `[1, 2, 3, 5]`
+    * **Input:** `head = [1]`, `k = 1`
+      **Output:** `[]`
+    * **Input:** `head = [1, 2]`, `k = 1`
+      **Output:** `[1]`
+     */
+
+    @ParameterizedTest(name = "Original: {0}, k: {1} -> Expected: {2}")
+    @CsvSource(value = {
+            "'1,2,3,4,5': 2 : '1,2,3,5'",
+            "'1'         : 1 : ''",
+            "'1,2'       : 1 : '1'",
+            "'1,2'       : 2 : '2'"
+    }, delimiter = ':')
+    void testRemoveKthLastNode(String inputStr, int k, String expectedStr) {
+        ListNode head = LinkedListUtils.createLinkedList(inputStr);
+        ListNode result = removeKthLastNode(head, k);
+        String actualStr = LinkedListUtils.linkedListToString(result);
+        assertEquals(expectedStr == null ? "" : expectedStr.trim(), actualStr);
+    }
+
+    public ListNode removeKthLastNode(ListNode head, int k) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode leader = dummy;
+        ListNode trailer = dummy;
+
+        // Move leader pointer k steps ahead
+        for (int i = 0; i < k; i++) {
+            leader = leader.next;
+        }
+
+        // Move both pointers until leader reaches the end
+        while (leader.next != null) {
+            leader = leader.next;
+            trailer = trailer.next;
+        }
+
+        // Remove the kth last node
+        trailer.next = trailer.next.next;
+
+        return dummy.next;
+    }
+
 }
+
 
