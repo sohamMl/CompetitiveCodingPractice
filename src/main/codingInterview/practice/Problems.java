@@ -11,8 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Problems extends TestBase {
 
@@ -773,6 +772,82 @@ public class Problems extends TestBase {
         trailer.next = trailer.next.next;
 
         return dummy.next;
+    }
+
+
+    @ParameterizedTest
+    @CsvSource(delimiter = ';', value = {
+            "4,1   ; 5,6,1 ; 8,4,5 ; true",  // Standard intersection (Sample Example)
+            "2,6,4 ; 1,5   ; null  ; false", // No intersection
+            "null  ; 1,2,3 ; null  ; false", // One list is empty, no intersection
+            "null  ; null  ; 1,2,3 ; true",  // Complete overlap (Both start at intersection)
+            "null  ; 9,11  ; 7     ; true"   // Intersect at tail node (List A starts at intersection)
+    })
+    void testLinkedListIntersection(String uniqueA, String uniqueB, String common, boolean hasIntersection) {
+        java.util.function.Function<String, ListNode> buildSegment = (String str) -> {
+            if (str == null || str.trim().equals("null") || str.trim().isEmpty()) return null;
+            String[] tokens = str.split(",");
+            ListNode dummy = new ListNode(0);
+            ListNode curr = dummy;
+            for (String token : tokens) {
+                curr.next = new ListNode(Integer.parseInt(token.trim()));
+                curr = curr.next;
+            }
+            return dummy.next;
+        };
+
+        java.util.function.Function<ListNode, ListNode> getTail = (ListNode head) -> {
+            if (head == null) return null;
+            ListNode curr = head;
+            while (curr.next != null) {
+                curr = curr.next;
+            }
+            return curr;
+        };
+
+        ListNode headA = buildSegment.apply(uniqueA);
+        ListNode headB = buildSegment.apply(uniqueB);
+        ListNode commonPart = buildSegment.apply(common);
+
+        if (headA != null) {
+            getTail.apply(headA).next = commonPart;
+        } else {
+            headA = commonPart;
+        }
+
+        if (headB != null) {
+            getTail.apply(headB).next = commonPart;
+        } else {
+            headB = commonPart;
+        }
+
+        ListNode actual = linkedListIntersection(headA, headB);
+
+        if (hasIntersection) {
+            assertEquals(commonPart, actual);
+        } else {
+            assertNull(actual);
+        }
+    }
+
+    public ListNode linkedListIntersection(ListNode headA, ListNode headB) {
+        ListNode pointrA = headA;
+        ListNode pointrB = headB;
+
+        while(pointrA != pointrB) {
+            /*
+             * If unique segment lengths are different (e.g., A = a+b, B = c+b),
+             * wrapping the pointers to the opposite list forces both to travel
+             * an identical total distance: (a + b) + c == (c + b) + a.
+             * * This aligns the pointers perfectly on their second pass,
+             * ensuring they enter the shared intersection 'b' at the exact same time.
+             * If no intersection exists, both reach the end and meet at 'null' simultaneously.
+             */
+            pointrA = pointrA != null ? pointrA.next : headB;
+            pointrB = pointrB != null ? pointrB.next : headA;
+        }
+
+        return pointrA;
     }
 
 }
