@@ -624,4 +624,98 @@ public class Problems extends TestBase {
     }
 
 
+    @ParameterizedTest
+    @CsvSource({
+            // format: "comma-separated-array-elements", ratio, expected_output
+            "'2,1,2,4,8,8', 2, 5",
+            "'2,3,4', 2, 0",
+            "'', 2, 0",
+            "'1,2', 2, 0",
+            "'5,5,5,5', 1, 4",
+            "'1,3,9,2,4,8', 3, 1",
+            "'4,2,1', 2, 0",
+            "'1,2,4,8,16', 2, 3"
+    })
+    void testGeometricSequenceTriplets(String numsStr, int r, int expected) {
+        int[] nums;
+        if (numsStr == null || numsStr.trim().isEmpty()) {
+            nums = new int[0];
+        } else {
+            nums = java.util.Arrays.stream(numsStr.split(","))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+        }
+        assertEquals(expected, geometric_sequence_triplets(nums, r));
+    }
+
+    public int geometric_sequence_triplets(int[] nums, int r) {
+        HashMap<Long, Long> leftMap = new HashMap<>();
+        HashMap<Long, Long> rightMap = new HashMap<>();
+        long count = 0;
+        // Populate 'rightMap' with the frequency of each element in the array.
+        for (int num : nums) {
+            long x = (long) num;
+            rightMap.put(x, rightMap.getOrDefault(x, 0L) + 1);
+        }
+        // Search for geometric triplets that have x as the center.
+        for (int num : nums) {
+            long x = (long) num;
+            // Decrement the frequency of x in 'rightMap' since x is now being
+            // processed and is no longer to the right.
+            rightMap.put(x, rightMap.get(x) - 1);
+            if (x % r == 0) {
+                count += leftMap.getOrDefault(x / r, 0L) * rightMap.getOrDefault(x * r, 0L);
+            }
+            // Increment the frequency of x in 'leftMap' since it'll be a part of the
+            // left side of the array once we iterate to the next value of `x`.
+            leftMap.put(x, leftMap.getOrDefault(x, 0L) + 1);
+        }
+        return (int) count;
+    }
+
+
+    /*
+    ## Problem Statement: Reverse a Linked List
+
+    Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+    ### Constraints & Edge Cases to Consider
+
+    * The list can be empty (return null).
+    * The list can have only one element (return the element).
+    * The list can have multiple elements.
+
+    ### Examples
+
+    * **Input:** `head = [1, 2, 3, 4, 5]`
+      **Output:** `[5, 4, 3, 2, 1]`
+     */
+
+    @ParameterizedTest(name = "Original: {0} -> Expected: {1}")
+    @CsvSource(value = {
+            "'', ''",
+            "'1', '1'",
+            "'1,2', '2,1'",
+            "'1,2,3,4,5', '5,4,3,2,1'"
+    })
+    void testReverseLinkedList(String inputStr, String expectedStr) {
+        ListNode head = LinkedListUtils.createLinkedList(inputStr);
+        ListNode reversed = reverseLinkedList(head);
+        String actualStr = LinkedListUtils.linkedListToString(reversed);
+        assertEquals(expectedStr == null ? "" : expectedStr.trim(), actualStr);
+    }
+
+    public ListNode reverseLinkedList(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode nextTemp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nextTemp;
+        }
+        return prev;
+    }
+
 }
+
