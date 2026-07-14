@@ -13,6 +13,13 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Main practice class containing solutions and test suites for various coding interview problems.
+ * Inherits setup and teardown logic from TestBase. Each problem typically consists of:
+ * 1. A Javadoc/block comment containing the problem statement, constraints, and examples.
+ * 2. A JUnit 5 parameterized test to execute assertions with multiple edge cases.
+ * 3. The core algorithm/logic method.
+ */
 public class Problems extends TestBase {
 
 
@@ -49,6 +56,18 @@ public class Problems extends TestBase {
         }
     }
 
+    /**
+     * Finds the first pair in a sorted array that sums to the target.
+     * 
+     * Algorithm: Two-Pointer Approach
+     * - We initialize two pointers: 'start' at index 0 and 'end' at the last index.
+     * - In a loop, we calculate the sum of elements at both pointers.
+     * - If sum < target, we move 'start' rightward to increase the sum (since the array is sorted).
+     * - If sum > target, we move 'end' leftward to decrease the sum.
+     * - If sum == target, we return the pair of indices.
+     * Time Complexity: O(N) since we traverse the array at most once.
+     * Space Complexity: O(1) auxiliary space.
+     */
     List<Integer> pairSumOfSortedArray(int target, int[] nums) {
         int start = 0, end = nums.length - 1;
 
@@ -129,6 +148,18 @@ public class Problems extends TestBase {
         });
     }
 
+    /**
+     * Finds all unique triplets in an array that sum up to 0.
+     * 
+     * Algorithm: Sort and Two-Pointer Approach
+     * - We first sort the input array.
+     * - We then iterate through the array, using each element nums[i] as the first element of the triplet.
+     * - To avoid duplicate triplets, we skip elements that are identical to their predecessor.
+     * - For each nums[i], we find pairs in the remaining right subarray (from i+1 to end) that sum to -nums[i]
+     *   using a two-pointer approach (pair_sum_sorted_all_pairs).
+     * Time Complexity: O(N^2) due to nested loop and two-pointer traversal.
+     * Space Complexity: O(log N) or O(N) depending on the library sort implementation.
+     */
     List<List<Integer>> tripletSum(int[] nums) {
         if(nums.length < 3) { return List.of(); }
 
@@ -186,6 +217,17 @@ public class Problems extends TestBase {
         assertEquals(expected, isPalindromeValid(input));
     }
 
+    /**
+     * Checks if a string is a valid palindrome, ignoring non-alphanumeric characters and case.
+     * 
+     * Algorithm: Two-Pointer Approach
+     * - Initialize 'left' at start and 'right' at end.
+     * - Skip any non-alphanumeric characters by advancing 'left' or decrementing 'right'.
+     * - Compare the lowercased characters at both pointers. If they differ, return false.
+     * - Repeat until pointers meet.
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
     boolean isPalindromeValid(String input) {
         int left = 0, right = input.length() - 1;
         while (left < right) {
@@ -245,7 +287,17 @@ public class Problems extends TestBase {
                 .toArray();
     }
 
-    //my solution
+    /**
+     * Shifts all zeros in the array to the end in-place while maintaining relative order of non-zeros.
+     * 
+     * Algorithm: Two-Pointer Write-Pointer Swap
+     * - 'left' pointer points to the boundary where the next non-zero element should be written.
+     * - 'right' pointer scans the array from left to right.
+     * - When nums[right] != 0, if it is different from left, we swap nums[left] and nums[right],
+     *   then increment 'left'.
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
     void shiftZerosToTheEnd(int[] nums) {
         if (nums.length > 1) {
             int left = 0;
@@ -311,7 +363,18 @@ public class Problems extends TestBase {
         assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
     }
 
-    // --- Method 2: Problem Logic (Two-Pointer Approach) ---
+    /**
+     * Computes the maximum area of water a container can hold between two vertical lines.
+     * 
+     * Algorithm: Two-Pointer Greedy Approach
+     * - Initialize 'left' pointer at start and 'right' pointer at end.
+     * - Calculate the area: width (right - left) multiplied by the shorter of the two heights.
+     * - Update 'maxWater' with the maximum area seen.
+     * - Move the pointer pointing to the shorter line inward, as keeping it cannot yield a larger area
+     *   (since the width decreases and the height will be limited by this shorter or an even shorter line).
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
     private int computeLargestContainer(int[] heights) {
         if (heights == null || heights.length < 2) {
             return 0;
@@ -359,7 +422,19 @@ public class Problems extends TestBase {
         assertEquals(expectedOutput, actualOutput, "Failed for input: " + inputStr);
     }
 
-    // --- Method 2: Problem Logic (Two-Pointer Approach) ---
+    /**
+     * Computes the total amount of water trapped after raining, given an elevation map.
+     * 
+     * Algorithm: Two-Pointer Boundary Tracking
+     * - Initialize 'left' at 0, 'right' at heights.length - 1, and 'leftMax' & 'rightMax' boundaries to 0.
+     * - Compare heights[left] and heights[right].
+     * - If heights[left] is smaller, water height at 'left' is bounded by leftMax.
+     *   Update leftMax, calculate trapped water at 'left' (leftMax - heights[left]), and increment left.
+     * - Otherwise, water height is bounded by rightMax. Update rightMax, calculate water (rightMax - heights[right]),
+     *   and decrement right.
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
     private int computeTrappedWater(int[] heights) {
         if (heights == null || heights.length < 3) {
             return 0;
@@ -408,6 +483,18 @@ public class Problems extends TestBase {
         assertEquals(expected, nextLexicographicalSequence(input));
     }
 
+    /**
+     * Finds the next lexicographical permutation of the string sequence.
+     * 
+     * Algorithm: Pivot-Swap-Reverse (Single Pass from Right)
+     * - 1. Scan from right to left to find the first decreasing character (the pivot), where s[pivot] < s[pivot+1].
+     * - 2. If no pivot is found, the sequence is in descending order; reverse the entire array.
+     * - 3. If pivot exists, scan from right to left to find the first character strictly greater than the pivot.
+     * - 4. Swap the pivot character and this character.
+     * - 5. Reverse the subarray to the right of the pivot to make it lexicographically smallest.
+     * Time Complexity: O(N)
+     * Space Complexity: O(N) to store the modified character array.
+     */
     public String nextLexicographicalSequence(String s) {
         char[] chars = s.toCharArray();
 
@@ -469,6 +556,17 @@ public class Problems extends TestBase {
         assertArrayEquals(expected, actual);
     }
 
+    /**
+     * Finds indices of two numbers in an unsorted array that sum to the target.
+     * 
+     * Algorithm: Hash Map Lookup
+     * - Create a HashMap mapping value to its index.
+     * - For each element nums[i], check if (target - nums[i]) exists in the map.
+     * - If it does, we found the pair; return its indices.
+     * - Otherwise, put nums[i] and its index in the map.
+     * Time Complexity: O(N)
+     * Space Complexity: O(N)
+     */
     public int[] pairSumUnsorted(int[] nums, int target) {
         HashMap<Integer, Integer> map = new HashMap<>();
 
@@ -490,6 +588,17 @@ public class Problems extends TestBase {
         assertEquals(expected, verifySudokuBoard(board));
     }
 
+    /**
+     * Verifies if a given 9x9 Sudoku board is valid (no duplicates in rows, columns, or 3x3 subgrids).
+     * 
+     * Algorithm: Hash Sets validation
+     * - Create 9 HashSets for rows, 9 HashSets for columns, and a 3x3 array of HashSets for boxes.
+     * - Iterate through every cell. If a cell contains a non-zero digit, check if it has already been seen
+     *   in its corresponding row, column, or 3x3 subgrid box (boxIndex = rowIndex / 3, colIndex / 3).
+     * - If duplicate is found, return false. Otherwise, add the digit to the sets.
+     * Time Complexity: O(1) since the board is always a fixed size of 81 cells.
+     * Space Complexity: O(1) for a fixed size grid.
+     */
     public boolean verifySudokuBoard(int[][] board) {
         HashSet<Integer>[] rows = (HashSet<Integer>[]) new HashSet[9];
         HashSet<Integer>[] cols = (HashSet<Integer>[]) new HashSet[9];
@@ -535,6 +644,19 @@ public class Problems extends TestBase {
         assertArrayEquals(expected, matrix);
     }
 
+    /**
+     * Modifies a matrix such that if an element is 0, its entire row and column are set to 0.
+     * 
+     * Algorithm: In-Place Markers (O(1) Auxiliary Space)
+     * - Use the first row and first column of the matrix as state markers.
+     * - First, determine if the first row or first column themselves should be zeroed initially.
+     * - Iterate through the rest of the matrix (1..rows, 1..cols). If matrix[i][j] == 0,
+     *   set matrix[i][0] = 0 and matrix[0][j] = 0 as indicators.
+     * - Iterate again through the submatrix (1..rows, 1..cols) and set matrix[i][j] to 0 if its row/col marker is 0.
+     * - Finally, zero out the first row and/or first column if the initial flags were true.
+     * Time Complexity: O(M * N)
+     * Space Complexity: O(1) auxiliary space.
+     */
     public void zeroStriping(int[][] matrix) {
         boolean row_contains_zeroes = false;
         boolean col_contains_zeroes = false;
@@ -599,6 +721,18 @@ public class Problems extends TestBase {
         assertEquals(expected, longestChainOfConsecutiveNumbers(nums));
     }
 
+    /**
+     * Finds the length of the longest consecutive elements sequence in an unsorted array.
+     * 
+     * Algorithm: Hash Set Boundary Scan
+     * - Insert all array elements into a HashSet for O(1) lookups.
+     * - Iterate through the set. For each number, check if it is the start of a sequence by verifying
+     *   that 'num - 1' is not present in the set.
+     * - If it is the start, traverse upward checking for 'num + 1', 'num + 2', etc., counting the length.
+     * - Track the maximum length found.
+     * Time Complexity: O(N) because each element is visited at most twice.
+     * Space Complexity: O(N) to store elements in the set.
+     */
     public int longestChainOfConsecutiveNumbers(int[] nums) {
         int longest_chain = 0;
 
@@ -647,6 +781,20 @@ public class Problems extends TestBase {
         assertEquals(expected, geometric_sequence_triplets(nums, r));
     }
 
+    /**
+     * Counts geometric triplets of indices (i, j, k) such that i < j < k and nums[j]/nums[i] = nums[k]/nums[j] = r.
+     * 
+     * Algorithm: Left-Right Hash Map Frequency Tracking
+     * - Create a 'rightMap' storing frequency counts of all numbers in the array.
+     * - Create a 'leftMap' to store frequency counts of numbers processed so far.
+     * - Iterate through each element 'x', treating it as the middle element of the triplet (x / r, x, x * r).
+     * - Decrement x's count in rightMap (since it's now the center, not on the right).
+     * - If x is divisible by r, the number of valid triplets with center x is:
+     *   leftMap.getOrDefault(x / r) * rightMap.getOrDefault(x * r).
+     * - Increment x's count in leftMap.
+     * Time Complexity: O(N)
+     * Space Complexity: O(N)
+     */
     public int geometric_sequence_triplets(int[] nums, int r) {
         HashMap<Long, Long> leftMap = new HashMap<>();
         HashMap<Long, Long> rightMap = new HashMap<>();
@@ -704,6 +852,17 @@ public class Problems extends TestBase {
         assertEquals(expectedStr == null ? "" : expectedStr.trim(), actualStr);
     }
 
+    /**
+     * Reverses a singly linked list in-place.
+     * 
+     * Algorithm: Iterative Pointer Redirection
+     * - Maintain three pointers: 'prev' (starts as null), 'curr' (starts as head), and a temporary 'nextTemp'.
+     * - In a loop, store curr.next in nextTemp, redirect curr.next to point to prev,
+     *   move prev to curr, and advance curr to nextTemp.
+     * - Return 'prev' as the new head of the reversed list.
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
     public ListNode reverseLinkedList(ListNode head) {
         ListNode prev = null;
         ListNode curr = head;
@@ -751,6 +910,19 @@ public class Problems extends TestBase {
         assertEquals(expectedStr == null ? "" : expectedStr.trim(), actualStr);
     }
 
+    /**
+     * Removes the K-th node from the end of the singly linked list.
+     * 
+     * Algorithm: Leader-Trailer (Fast-Slow) Two-Pointer Approach
+     * - Use a 'dummy' node pointing to head to simplify edge cases (like removing the head).
+     * - Initialize 'leader' and 'trailer' pointers at the dummy node.
+     * - Advance the 'leader' pointer k steps ahead.
+     * - Move both 'leader' and 'trailer' pointers one node at a time until 'leader.next' is null (leader reaches last node).
+     * - Since 'leader' is k nodes ahead, 'trailer' will point to the node immediately before the K-th last node.
+     * - Skip the K-th last node by setting trailer.next = trailer.next.next.
+     * Time Complexity: O(N)
+     * Space Complexity: O(1)
+     */
     public ListNode removeKthLastNode(ListNode head, int k) {
         ListNode dummy = new ListNode(0);
         dummy.next = head;
@@ -830,6 +1002,18 @@ public class Problems extends TestBase {
         }
     }
 
+    /**
+     * Finds the intersection node of two singly linked lists.
+     * 
+     * Algorithm: Two-Pointer Length Synchronization
+     * - Initialize 'pointerA' at headA and 'pointerB' at headB.
+     * - Advance both pointers. When 'pointerA' reaches null, redirect it to headB.
+     * - When 'pointerB' reaches null, redirect it to headA.
+     * - This ensures both pointers travel the exact same total distance: len(uniqueA) + len(common) + len(uniqueB).
+     * - They will meet at either the intersection node (if it exists) or null (if no intersection).
+     * Time Complexity: O(N + M)
+     * Space Complexity: O(1)
+     */
     public ListNode linkedListIntersection(ListNode headA, ListNode headB) {
         ListNode pointrA = headA;
         ListNode pointrB = headB;
@@ -848,6 +1032,33 @@ public class Problems extends TestBase {
         }
 
         return pointrA;
+    }
+
+    /**
+     * Validates the LRU Cache implementation.
+     * 
+     * Test Case:
+     * - Initialize a cache of capacity 2.
+     * - Put key-value pairs (1, 1) and (2, 2).
+     * - Verify that retrieving key 1 returns 1.
+     * - Put (3, 3), which should evict the least recently used key (2).
+     * - Verify that retrieving key 2 returns -1 (not found).
+     * - Put (4, 4), which should evict the least recently used key (1).
+     * - Verify that retrieving key 1 returns -1.
+     * - Verify that retrieving key 3 returns 3 and key 4 returns 4.
+     */
+    @Test
+    void testLRUCache() {
+        LRUCache cache = new LRUCache(2);
+        cache.put(1, 1);
+        cache.put(2, 2);
+        assertEquals(1, cache.get(1));       // returns 1
+        cache.put(3, 3);                     // evicts key 2 (1 was accessed, so 2 is LRU)
+        assertEquals(-1, cache.get(2));      // returns -1 (not found)
+        cache.put(4, 4);                     // evicts key 1 (3 is most recent, 1 was older than 3)
+        assertEquals(-1, cache.get(1));      // returns -1 (not found)
+        assertEquals(3, cache.get(3));       // returns 3
+        assertEquals(4, cache.get(4));       // returns 4
     }
 
 }

@@ -4,7 +4,17 @@ import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
 
+/**
+ * Data provider class containing test data streams for parameterized tests in Problems.java.
+ * Leverages JUnit 5's MethodSource to feed inputs and expected values into test methods.
+ */
 public class ProblemData {
+    /**
+     * Provides test boards for the Sudoku board validation test.
+     * Each test argument contains a 9x9 grid representation of a board and a boolean representing whether the board is valid.
+     *
+     * @return a stream of arguments (int[][] board, boolean expectedValidity)
+     */
     public static Stream<Arguments> sudokuTestData() {
         return Stream.of(
                 // Edge Case 1: Empty board (valid)
@@ -76,6 +86,12 @@ public class ProblemData {
 
 
 
+    /**
+     * Provides test matrices for the zero striping (set matrix zeroes) test.
+     * Each test argument contains an input matrix and the expected transformed matrix.
+     *
+     * @return a stream of arguments (int[][] matrix, int[][] expectedMatrix)
+     */
     public static Stream<Arguments> zeroStripingData() {
         return Stream.of(
                 // Standard Example 1: Basic submatrix zeroing
