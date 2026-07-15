@@ -1061,6 +1061,74 @@ public class Problems extends TestBase {
         assertEquals(4, cache.get(4));       // returns 4
     }
 
+
+
+    /**
+     * Checks if a singly linked list is a palindrome.
+     * 
+     * Algorithm: Fast & Slow Pointer Middle Search with Second Half Reversal
+     * 1. Find the end of the first half using the fast and slow pointer technique:
+     *    - 'slow' moves one step at a time, 'fast' moves two steps.
+     *    - When 'fast.next' or 'fast.next.next' is null, 'slow' points to the end of the first half.
+     * 2. Reverse the second half of the list starting from 'slow.next'.
+     * 3. Compare the values of the first half and the reversed second half.
+     *    - We only need to check while the reversed second half pointer is not null.
+     * 4. Restore the original list structure by reversing the second half back (best practice).
+     * 5. Return whether the list is a palindrome.
+     * 
+     * Time Complexity: O(N) since we traverse the list a constant number of times.
+     * Space Complexity: O(1) auxiliary space as we modify the pointers in-place.
+     */
+    public boolean palindromic_linked_list(ListNode head) {
+        if (head == null || head.next == null) {
+            return true;
+        }
+
+        // 1. Find the end of the first half
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // 2. Reverse the second half
+        ListNode secondHalfHead = reverseLinkedList(slow.next);
+
+        // 3. Compare the first half and the reversed second half
+        ListNode pointrA = secondHalfHead;
+        ListNode pointrB = head;
+        boolean isPalindrome = true;
+        while (pointrA != null) {
+            if (pointrA.val != pointrB.val) {
+                isPalindrome = false;
+                break;
+            }
+            pointrA = pointrA.next;
+            pointrB = pointrB.next;
+        }
+
+        // 4. Restore the original list structure
+        slow.next = reverseLinkedList(secondHalfHead);
+
+        return isPalindrome;
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'1,2,2,1', true",   // Example 1
+            "'1,2', false",      // Example 2
+            "'1', true",         // Edge Case: Single element
+            "'', true",          // Edge Case: Empty list
+            "'1,2,3,2,1', true", // Odd length palindrome
+            "'1,2,3,4,1', false",// Odd length non-palindrome
+            "'7,7,7,7', true"    // All identical elements
+    })
+    void testPalindromicLinkedList(String listStr, boolean expected) {
+        ListNode head = LinkedListUtils.createLinkedList(listStr);
+        assertEquals(expected, palindromic_linked_list(head));
+    }
+
 }
 
 
