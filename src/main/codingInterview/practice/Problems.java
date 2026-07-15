@@ -1084,7 +1084,7 @@ public class Problems extends TestBase {
             return true;
         }
 
-        // 1. Find the end of the first half
+        // 1. Find the end of the first half using fast and slow pointers
         ListNode slow = head;
         ListNode fast = head;
         while (fast.next != null && fast.next.next != null) {
