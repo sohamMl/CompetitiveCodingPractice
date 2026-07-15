@@ -2,6 +2,7 @@ package main.codingInterview.practice;
 
 import org.junit.jupiter.params.provider.Arguments;
 
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -191,6 +192,61 @@ public class ProblemData {
                                 {0, 0}
                         }
                 )
+        );
+    }
+
+
+    /**
+     * Provides a stream of test arguments for validating the multi-level list flattening algorithm.
+     * Each test case contains the head of a multi-level list and the expected flattened sequence of integers.
+     *
+     * @return a Stream of Arguments containing (MultiLevelListNode head, int[] expectedFlattenedArray)
+     */
+    public static Stream<Arguments> testFlattenMultiLevelListData() {
+        // Helper to build a multi-level list from a node array where index [i] connects to [i+1] via next
+        // and children are linked manually for specific test cases.
+        Function<int[], MultiLevelListNode> createList = (vals) -> {
+            if (vals == null || vals.length == 0) return null;
+            MultiLevelListNode[] nodes = new MultiLevelListNode[vals.length];
+            for (int i = 0; i < vals.length; i++) {
+                nodes[i] = new MultiLevelListNode(vals[i], null, null);
+            }
+            for (int i = 0; i < vals.length - 1; i++) {
+                nodes[i].next = nodes[i + 1];
+            }
+            return nodes[0];
+        };
+
+        // Case 1: Standard multi-level list
+        // L1: 1 -> 2 -> 3 -> 4
+        //          |
+        // L2:      5 -> 6
+        //               |
+        // L3:           7 -> 8
+        MultiLevelListNode h1 = createList.apply(new int[]{1, 2, 3, 4});
+        MultiLevelListNode c1 = createList.apply(new int[]{5, 6});
+        MultiLevelListNode c2 = createList.apply(new int[]{7, 8});
+        h1.next.child = c1; // 2 -> 5
+        c1.next.child = c2; // 6 -> 7
+        int[] expected1 = {1, 2, 3, 4, 5, 6, 7, 8};
+
+        // Case 2: Single level list (no children)
+        MultiLevelListNode h2 = createList.apply(new int[]{10, 20, 30});
+        int[] expected2 = {10, 20, 30};
+
+        // Case 3: Single node with child
+        MultiLevelListNode h3 = new MultiLevelListNode(1, null, new MultiLevelListNode(2, null, null));
+        int[] expected3 = {1, 2};
+
+        // Case 4: Empty list
+        MultiLevelListNode h4 = null;
+        int[] expected4 = {};
+
+        return Stream.of(
+                Arguments.of(h1, expected1),
+                Arguments.of(h2, expected2),
+                Arguments.of(h3, expected3),
+                Arguments.of(h4, expected4)
         );
     }
 }

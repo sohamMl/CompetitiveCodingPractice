@@ -1129,6 +1129,72 @@ public class Problems extends TestBase {
         assertEquals(expected, palindromic_linked_list(head));
     }
 
+
+
+    /**
+     * Parameterized test to verify that the flatten_multi_level_list method correctly
+     * flattens a multi-level linked list into a single level.
+     * It also validates that all child pointers are successfully nullified.
+     *
+     * @param head          the head node of the multi-level list
+     * @param expectedArray the expected array containing values in the flattened list order
+     */
+    @ParameterizedTest
+    @MethodSource("main.codingInterview.practice.ProblemData#testFlattenMultiLevelListData")
+    public void testFlattenMultiLevelList(MultiLevelListNode head, int[] expectedArray) {
+        MultiLevelListNode result = flatten_multi_level_list(head);
+
+        List<Integer> actualList = new ArrayList<>();
+        MultiLevelListNode curr = result;
+        while (curr != null) {
+            // Verify that all child pointers are set to null as part of the flattening process
+            Assertions.assertNull(curr.child, "Child pointer must be nullified after flattening.");
+            actualList.add(curr.val);
+            curr = curr.next;
+        }
+
+        int[] actualArray = actualList.stream().mapToInt(i -> i).toArray();
+        Assertions.assertArrayEquals(expectedArray, actualArray);
+    }
+
+    /**
+     * Flattens a multi-level singly linked list in-place such that all nodes appear in a single
+     * level sequence. When a node with a child is encountered, its child list is appended to the
+     * end of the first-level list. The traversal continues, eventually processing the child lists
+     * themselves as they are reached.
+     *
+     * @param head the head of the multi-level linked list
+     * @return the head of the flattened list
+     */
+    public static MultiLevelListNode flatten_multi_level_list(MultiLevelListNode head) {
+        if (head == null) { return null;}
+
+        MultiLevelListNode curr = head;
+        MultiLevelListNode tail = head;
+
+        // Find the initial tail of the first-level list
+        while (tail.next != null) {
+            tail = tail.next;
+        }
+
+        // Traverse the main list. As we append children to the tail, the list expands dynamically,
+        // allowing us to naturally process children and nested grandchildren in a BFS-like level order.
+        while(curr!=null) {
+            if(curr.child!=null) {
+                // Link the current tail to the start of the child sub-list
+                tail.next = curr.child;
+                // Sever the child pointer as requested by the problem structure
+                curr.child = null;
+                // Move the tail pointer to the end of the newly appended sub-list
+                while(tail.next != null) {
+                    tail = tail.next;
+                }
+            }
+            curr = curr.next;
+        }
+        return head;
+    }
+
 }
 
 
