@@ -1,4 +1,4 @@
-package main.codingInterview.practice;
+package main.codingInterview.practice.supportingfiles;
 
 /**
  * Represents a node in a multi-level singly linked list.

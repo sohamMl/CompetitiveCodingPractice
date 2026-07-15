@@ -1,6 +1,10 @@
 package main.codingInterview.practice;
 
 import main.TestBase;
+import main.codingInterview.practice.supportingfiles.LRUCache;
+import main.codingInterview.practice.supportingfiles.LinkedListUtils;
+import main.codingInterview.practice.supportingfiles.ListNode;
+import main.codingInterview.practice.supportingfiles.MultiLevelListNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -582,7 +586,7 @@ public class Two_Pointers_Maps_Sets_LinkedLists_Problems extends TestBase {
 
 
     @ParameterizedTest
-    @MethodSource("main.codingInterview.practice.ProblemData#sudokuTestData")
+    @MethodSource("main.codingInterview.practice.supportingfiles.ProblemData#sudokuTestData")
     void verifySudokuBoard_ShouldReturnExpectedValidity(int[][] board, boolean expected) {
         // Act & Assert
         assertEquals(expected, verifySudokuBoard(board));
@@ -638,7 +642,7 @@ public class Two_Pointers_Maps_Sets_LinkedLists_Problems extends TestBase {
 
 
     @ParameterizedTest
-    @MethodSource("main.codingInterview.practice.ProblemData#zeroStripingData")
+    @MethodSource("main.codingInterview.practice.supportingfiles.ProblemData#zeroStripingData")
     void testZeroStriping(int[][] matrix, int[][] expected) {
         zeroStriping(matrix);
         assertArrayEquals(expected, matrix);
@@ -1140,7 +1144,7 @@ public class Two_Pointers_Maps_Sets_LinkedLists_Problems extends TestBase {
      * @param expectedArray the expected array containing values in the flattened list order
      */
     @ParameterizedTest
-    @MethodSource("main.codingInterview.practice.ProblemData#testFlattenMultiLevelListData")
+    @MethodSource("main.codingInterview.practice.supportingfiles.ProblemData#testFlattenMultiLevelListData")
     public void testFlattenMultiLevelList(MultiLevelListNode head, int[] expectedArray) {
         MultiLevelListNode result = flatten_multi_level_list(head);
 

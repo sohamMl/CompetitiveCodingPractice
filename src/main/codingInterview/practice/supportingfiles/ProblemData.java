@@ -1,4 +1,4 @@
-package main.codingInterview.practice;
+package main.codingInterview.practice.supportingfiles;
 
 import org.junit.jupiter.params.provider.Arguments;
 

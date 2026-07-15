@@ -1,4 +1,4 @@
-package main.codingInterview.practice;
+package main.codingInterview.practice.supportingfiles;
 
 /**
  * Represents a node in a doubly linked list used for key-value pair storage (e.g., in an LRU Cache).
