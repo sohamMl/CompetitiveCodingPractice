@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 2. A JUnit 5 parameterized test to execute assertions with multiple edge cases.
  * 3. The core algorithm/logic method.
  */
-public class Problems extends TestBase {
+public class Two_Pointers_Maps_Sets_LinkedLists_Problems extends TestBase {
 
 
     // this is for finding the first pair only. We have to use brute force to find all pairs
