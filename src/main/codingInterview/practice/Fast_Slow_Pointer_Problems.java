@@ -2,6 +2,7 @@ package main.codingInterview.practice;
 
 import main.TestBase;
 import main.codingInterview.practice.supportingfiles.ListNode;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -131,5 +132,86 @@ public class Fast_Slow_Pointer_Problems extends TestBase {
         return false;
     }
 
+
+    /**
+     * Parameterized test to verify that the isHappy method correctly identifies happy numbers.
+     * It tests a variety of numbers including known happy numbers, unhappy numbers,
+     * single digits, boundary cases, and larger values.
+     *
+     * @param n        the number to be checked
+     * @param expected true if the number is happy, false otherwise
+     */
+    @ParameterizedTest
+    @CsvSource({
+            "23, true",    // Sample Example
+            "1, true",     // Base happy number
+            "2, false",    // Single digit unhappy number
+            "4, false",    // Known unhappy loop starting point
+            "7, true",     // Single digit happy number
+            "19, true",    // Two digit happy number
+            "243, false",  // Threshold boundary case
+            "999, false"   // Upper boundary of 3 digits
+    })
+    public void testIsHappy(int n, boolean expected) {
+        assertEquals(expected, isHappy(n));
+    }
+
+    /**
+     * Determines whether a number is a "happy" number.
+     * A happy number is defined by the following process:
+     * - Starting with any positive integer, replace the number by the sum of the squares of its digits.
+     * - Repeat the process until the number equals 1 (where it will stay), or it loops endlessly in a cycle
+     *   which does not include 1.
+     * - Those numbers for which this process ends in 1 are happy.
+     *
+     * Algorithmic Details:
+     * - Time Complexity: O(log N) as the number of digits decreases/remains bounded and converges quickly.
+     * - Space Complexity: O(1) auxiliary space.
+     *
+     * How it works:
+     * - We treat this as a cycle detection problem (Floyd's Cycle-Finding Algorithm).
+     * - The slow pointer calculates the next number once per step.
+     * - The fast pointer calculates the next number twice per step.
+     * - If the fast pointer reaches 1, the number is happy.
+     * - If the fast pointer meets the slow pointer (cycle), and it is not 1, the number is not happy.
+     *
+     * @param n the positive integer to check
+     * @return true if n is a happy number, false otherwise
+     */
+    public boolean isHappy(int n) {
+        if (n <= 0) {
+            return false;
+        }
+
+        int slow = n;
+        int fast = n;
+
+        do {
+            slow = getNextNumber(slow);
+            fast = getNextNumber(getNextNumber(fast));
+
+            if (fast == 1) {
+                return true;
+            }
+        } while (fast != slow);
+
+        return false;
+    }
+
+    /**
+     * Helper method that calculates the sum of the squares of the digits of a given number.
+     *
+     * @param x the number whose digit squares are to be summed
+     * @return the sum of the squares of the digits of x
+     */
+    public int getNextNumber(int x) {
+        int sum = 0;
+        while (x != 0) {
+            int num = x % 10;
+            sum += num * num;
+            x = x / 10;
+        }
+        return sum;
+    }
 
 }
