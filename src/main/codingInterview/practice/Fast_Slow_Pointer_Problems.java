@@ -4,6 +4,9 @@ import main.TestBase;
 import main.codingInterview.practice.supportingfiles.ListNode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -77,4 +80,56 @@ public class Fast_Slow_Pointer_Problems extends TestBase {
 
         return slowPtr;
     }
+
+
+
+    /**
+     * Parameterized test to verify that the linkedListLoop method correctly detects
+     * whether a linked list contains a cycle (loop). It retrieves test lists
+     * (some with cycles, some without) from ProblemData.testLinkedListLoopData.
+     *
+     * @param head     the head of the linked list to be tested
+     * @param expected true if the list is expected to have a cycle, false otherwise
+     */
+    @ParameterizedTest
+    @MethodSource("main.codingInterview.practice.supportingfiles.ProblemData#testLinkedListLoopData")
+    void testLinkedListLoop(ListNode head, boolean expected) {
+        assertEquals(expected, linkedListLoop(head));
+    }
+
+    /**
+     * Detects if a singly linked list contains a cycle (loop) using the Fast and Slow Pointer
+     * (Floyd's Cycle-Finding / Tortoise and Hare) algorithm.
+     *
+     * Algorithmic Details:
+     * - Time Complexity: O(N) where N is the number of nodes in the list.
+     * - Space Complexity: O(1) auxiliary space.
+     *
+     * How it works:
+     * - We initialize two pointers, slow and fast, at the head of the list.
+     * - The slow pointer moves one step at a time, while the fast pointer moves two steps.
+     * - If there is a cycle, the fast pointer will eventually wrap around and meet the slow pointer (slow == fast).
+     * - If the fast pointer reaches the end of the list (null), then no cycle exists.
+     *
+     * @param head the head of the singly linked list
+     * @return true if the linked list contains a cycle, false otherwise
+     */
+    public boolean linkedListLoop(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+
+        // Traverse the list using fast and slow pointers
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+
+            // If the pointers meet, a cycle is detected
+            if (slow == fast) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }

@@ -249,4 +249,54 @@ public class ProblemData {
                 Arguments.of(h4, expected4)
         );
     }
+
+
+    public static Stream<Arguments> testLinkedListLoopData() {
+        // Helper to build a basic linked list from an array
+        java.util.function.Function<int[], ListNode> createList = (int[] arr) -> {
+            if (arr == null || arr.length == 0) return null;
+            ListNode head = new ListNode(arr[0]);
+            ListNode curr = head;
+            for (int i = 1; i < arr.length; i++) {
+                curr.next = new ListNode(arr[i]);
+                curr = curr.next;
+            }
+            return head;
+        };
+
+        // Case 1: Empty list (Edge case)
+        ListNode case1 = null;
+
+        // Case 2: Single node, no cycle (Edge case)
+        ListNode case2 = new ListNode(1);
+
+        // Case 3: Single node, self cycle (Edge case)
+        ListNode case3 = new ListNode(1);
+        case3.next = case3;
+
+        // Case 4: Multiple nodes, no cycle
+        ListNode case4 = createList.apply(new int[]{1, 2, 3, 4, 5});
+
+        // Case 5: Perfect cycle (Example 1)
+        ListNode case5 = createList.apply(new int[]{1, 2, 3});
+        ListNode curr5 = case5;
+        while (curr5.next != null) curr5 = curr5.next;
+        curr5.next = case5;
+
+        // Case 6: Delayed cycle (Example 2)
+        ListNode case6 = createList.apply(new int[]{1, 2, 3, 4, 5});
+        ListNode cycleStart6 = case6.next.next; // Node 3
+        ListNode curr6 = case6;
+        while (curr6.next != null) curr6 = curr6.next;
+        curr6.next = cycleStart6;
+
+        return Stream.of(
+                Arguments.of(case1, false),
+                Arguments.of(case2, false),
+                Arguments.of(case3, true),
+                Arguments.of(case4, false),
+                Arguments.of(case5, true),
+                Arguments.of(case6, true)
+        );
+    }
 }
