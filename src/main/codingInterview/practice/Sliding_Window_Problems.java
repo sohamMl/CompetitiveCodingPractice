@@ -4,6 +4,8 @@ import main.TestBase;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -198,5 +200,69 @@ public class Sliding_Window_Problems extends TestBase {
             right++;
         }
         return count;
+    }
+
+    /**
+     * Parameterized test to verify that the longestSubstringWithUniqueChars method correctly
+     * calculates the length of the longest substring without repeating characters.
+     *
+     * @param s        the input string to evaluate
+     * @param expected the expected length of the longest substring with unique characters
+     */
+    @ParameterizedTest
+    @CsvSource({
+            "abcba, 3",       // Sample example
+            "'', 0",          // Empty string
+            "a, 1",           // Single character
+            "bbbbb, 1",       // All repeating characters
+            "pwwkew, 3",      // Duplicate characters with non-adjacent repeats ("wke")
+            "abcdefg, 7",     // All unique characters
+            "aab, 2",         // Duplicate at the beginning
+            "abb, 2",         // Duplicate at the end
+            "tmmzuxt, 5"      // Complex string with multiple overlapping duplicates ("mzuxt")
+    })
+    void testLongestSubstringWithUniqueChars(String s, int expected) {
+        int actual = longestSubstringWithUniqueChars(s);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Finds the length of the longest substring containing all unique (non-repeating) characters
+     * using the Dynamic Sliding Window pattern with character last-seen index tracking.
+     *
+     * Algorithmic Details:
+     * - Time Complexity: O(N) where N is the length of string s. Each character is visited at most once by the right pointer,
+     *   and the left pointer jumps directly using the `lastSeen` array without incremental step-by-step scanning.
+     * - Space Complexity: O(1) auxiliary space (specifically O(26) = O(1) space for character index tracking array).
+     *
+     * How it works:
+     * - Maintain an array `lastSeen` initialized to -1 to track the most recent 0-based index of each character.
+     * - Iterate through string s using a `right` pointer to expand the sliding window.
+     * - If the current character `c` was seen inside the active window (`lastSeen[c] >= left`),
+     *   shrink the window by advancing `left` to `lastSeen[c] + 1` to eliminate the duplicate character.
+     * - Record the current character's index in `lastSeen[c]`.
+     * - Update `maxLen` with the current window length (`right - left + 1`).
+     *
+     * @param s the input string consisting of lowercase English letters
+     * @return the length of the longest substring with all unique characters
+     */
+    public int longestSubstringWithUniqueChars(String s) {
+        int[] lastSeen = new int[26];
+        Arrays.fill(lastSeen, -1);
+
+        int left = 0, maxLen = 0;
+
+        // Expand the sliding window using the right pointer
+        for (int right = 0; right < s.length(); right++) {
+            int c = s.charAt(right) - 'a';
+            // If character was seen within current window, jump left pointer past its previous occurrence
+            if (lastSeen[c] >= left) {
+                left = lastSeen[c] + 1;
+            }
+            // Update last seen index of character and recalculate max window length
+            lastSeen[c] = right;
+            maxLen = Math.max(maxLen, right - left + 1);
+        }
+        return maxLen;
     }
 }
