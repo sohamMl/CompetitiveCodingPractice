@@ -420,4 +420,82 @@ public class Binary_Search_Problems extends TestBase {
         // element is the actual target we were tracking down.
         return nums[left] == target ? left : -1;
     }
+
+
+    /**
+     * PROBLEM STATEMENT:
+     * Determine if a target value exists in an m x n matrix.
+     * Each row of the matrix is sorted in non-decreasing order, and the first value
+     * of each row is greater than or equal to the last value of the previous row.
+     *
+     * ALGORITHM DESCRIPTION:
+     * Since the matrix is fully sorted across rows sequentially, it can be treated
+     * as a single, continuous, flattened 1D sorted array of size (rows * cols).
+     * We perform a standard binary search on this virtual 1D space, mapping the 1D
+     * index back to 2D coordinates on the fly to achieve O(log(m * n)) time complexity
+     * and O(1) space complexity.
+     */
+
+    @ParameterizedTest
+    @CsvSource(delimiter = ';', value = {
+            // Format: matrix (row-by-row) ; target ; expected
+            "1,3,5,7 | 10,11,16,20 | 23,30,34,60 ; 3 ; true",
+            "1,3,5,7 | 10,11,16,20 | 23,30,34,60 ; 13 ; false",
+            "5 ; 5 ; true",
+            "5 ; 1 ; false",
+            "10,20 | 30,40 ; 2 ; false",
+            "10,20 | 30,40 ; 50 ; false",
+            "1,2,3,4,5 ; 4 ; true",
+            "1 | 3 | 5 ; 3 ; true"
+    })
+    void testMatrixSearch(String matrixStr, int target, boolean expected) {
+        String[] rows = matrixStr.split(" \\| ");
+        int[][] matrix = new int[rows.length][];
+        for (int i = 0; i < rows.length; i++) {
+            String[] cells = rows[i].split(",");
+            matrix[i] = new int[cells.length];
+            for (int j = 0; j < cells.length; j++) {
+                matrix[i][j] = Integer.parseInt(cells[j].trim());
+            }
+        }
+        assertEquals(expected, matrixSearch(matrix, target));
+    }
+
+
+    public boolean matrixSearch(int[][] matrix, int target) {
+        // Handle empty matrix edge case
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return false;
+
+        int rows = matrix.length, cols = matrix[0].length;
+
+        // Initialize pointers for the virtual 1D array space
+        int left = 0, right = rows * cols - 1;
+
+        // Execute loop until search space is exhausted (left > right)
+        while (left <= right) {
+            // Calculate the midpoint 1D index, preventing integer overflow
+            int mid = left + (right - left) / 2;
+
+            // Map the 1D index 'mid' back to 2D matrix coordinates (r, c)
+            // 'cols' determines the row wrapping boundary
+            int r = mid / cols;
+            int c = mid % cols;
+
+            // Check if the current element matches the target
+            if (target == matrix[r][c]) {
+                return true;
+            }
+            // If target is smaller, disregard the right half of the remaining elements
+            else if (target < matrix[r][c]) {
+                right = mid - 1;
+            }
+            // If target is larger, disregard the left half of the remaining elements
+            else {
+                left = mid + 1;
+            }
+        }
+
+        // Target not found within the matrix
+        return false;
+    }
 }
