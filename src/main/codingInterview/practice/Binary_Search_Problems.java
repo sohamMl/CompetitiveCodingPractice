@@ -13,32 +13,54 @@ public class Binary_Search_Problems extends TestBase {
 
 
     /**
-     * BINARY SEARCH ON ANSWER (TEMPLATE & CHEAT SHEET)
+     * BINARY SEARCH (TEMPLATE & CHEAT SHEET)
      * -----------------------------------------------------------------------------
-     * Use this guide to determine pointer updates and midpoint formulas based on
-     * the shape of the problem's search space.
-     * * 1. UPPER BOUND (Finding the LAST True)
+     * Use this guide to determine pointer updates, loop conditions, and midpoint
+     * formulas based on whether you are seeking an exact match or a boundary.
+     *
+     * 1. EXACT MATCH (Searching for a Specific Element)
+     * Use Case: "Find if target exists in array/matrix", "Find exact target index"
+     * Pattern: Narrow down the search space until the target is found or space is exhausted.
+     *
+     * Logic:
+     * - Loop Condition: while (left <= right) // Must check final element when left == right
+     * - mid = left + (right - left) / 2;
+     * - if (target == midVal) return true/mid;
+     * - else if (target < midVal) right = mid - 1;
+     * - else left = mid + 1;
+     * - Result: Return false or -1 (target not found, pointers crossed: left > right)
+     *
+     * -----------------------------------------------------------------------------
+     * 2. UPPER BOUND (Finding the LAST True / Binary Search on Answer)
      * Use Case: "Maximize the minimum", "Find highest valid setting" (e.g., Woodcutter)
      * Pattern:  [T, T, T, T, F, F, F] -> Looking for the last 'T'
-     * * Logic:
+     *
+     * Logic:
+     * - Loop Condition: while (left < right) // Converges directly on the boundary
      * - mid = left + (right - left + 1) / 2;  // NOTE: MUST +1 to Right-Bias mid!
      * - if (isValid(mid)) left = mid;         // Answer is mid or to the right
      * - else              right = mid - 1;    // mid is invalid, look left
-     * * -----------------------------------------------------------------------------
-     * 2. LOWER BOUND (Finding the FIRST True)
+     * - Result: return left; (or right, as they meet at the answer)
+     *
+     * -----------------------------------------------------------------------------
+     * 3. LOWER BOUND (Finding the FIRST True / Binary Search on Answer)
      * Use Case: "Minimize the maximum", "Find lowest valid cost/speed"
      * Pattern:  [F, F, F, T, T, T, T] -> Looking for the first 'T'
-     * * Logic:
+     *
+     * Logic:
+     * - Loop Condition: while (left < right) // Converges directly on the boundary
      * - mid = left + (right - left) / 2;      // Standard Left-Biased mid
      * - if (isValid(mid)) right = mid;        // Answer is mid or to the left
      * - else              left = mid + 1;     // mid is invalid, look right
-     * * -----------------------------------------------------------------------------
-     * GOLDEN RULE TO PREVENT INFINITE LOOPS:
-     * - If your update step uses `left = mid`, your mid calculation MUST have `+ 1`.
-     * - If your update step uses `left = mid + 1`, your mid calculation does NOT have `+ 1`.
-     * - Loop Condition is always: while (left < right)
-     * - Result is always: return left; (or return right, as they meet at the answer)
+     * - Result: return left; (or right, as they meet at the answer)
+     *
+     * -----------------------------------------------------------------------------
+     * GOLDEN RULES TO PREVENT INFINITE LOOPS & BUGS:
+     * - EXACT MATCH uses `<=`. BOUNDARY MAPPING uses `<` because convergence is the answer.
+     * - If your boundary update step uses `left = mid`, your mid calculation MUST have `+ 1`.
+     * - If your boundary update step uses `left = mid + 1`, your mid calculation does NOT have `+ 1`.
      */
+
 
     @ParameterizedTest
     @CsvSource(value = {
