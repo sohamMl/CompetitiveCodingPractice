@@ -11,6 +11,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Binary_Search_Problems extends TestBase {
 
+
+    /**
+     * BINARY SEARCH ON ANSWER (TEMPLATE & CHEAT SHEET)
+     * -----------------------------------------------------------------------------
+     * Use this guide to determine pointer updates and midpoint formulas based on
+     * the shape of the problem's search space.
+     * * 1. UPPER BOUND (Finding the LAST True)
+     * Use Case: "Maximize the minimum", "Find highest valid setting" (e.g., Woodcutter)
+     * Pattern:  [T, T, T, T, F, F, F] -> Looking for the last 'T'
+     * * Logic:
+     * - mid = left + (right - left + 1) / 2;  // NOTE: MUST +1 to Right-Bias mid!
+     * - if (isValid(mid)) left = mid;         // Answer is mid or to the right
+     * - else              right = mid - 1;    // mid is invalid, look left
+     * * -----------------------------------------------------------------------------
+     * 2. LOWER BOUND (Finding the FIRST True)
+     * Use Case: "Minimize the maximum", "Find lowest valid cost/speed"
+     * Pattern:  [F, F, F, T, T, T, T] -> Looking for the first 'T'
+     * * Logic:
+     * - mid = left + (right - left) / 2;      // Standard Left-Biased mid
+     * - if (isValid(mid)) right = mid;        // Answer is mid or to the left
+     * - else              left = mid + 1;     // mid is invalid, look right
+     * * -----------------------------------------------------------------------------
+     * GOLDEN RULE TO PREVENT INFINITE LOOPS:
+     * - If your update step uses `left = mid`, your mid calculation MUST have `+ 1`.
+     * - If your update step uses `left = mid + 1`, your mid calculation does NOT have `+ 1`.
+     * - Loop Condition is always: while (left < right)
+     * - Result is always: return left; (or return right, as they meet at the answer)
+     */
+
     @ParameterizedTest
     @CsvSource(value = {
             "'1, 2, 4, 5, 7, 8, 9', 4, 2",
@@ -236,4 +265,75 @@ public class Binary_Search_Problems extends TestBase {
         }
     }
     * */
+
+
+
+
+    /**
+     * Problem: Cutting Wood (Binary Search on Answer)
+     * -----------------------------------------------------------------------------
+     * Given an array of tree heights and a target length of wood 'k', find the
+     * highest possible height setting 'H' for a woodcutter such that cutting off
+     * the tops of trees taller than 'H' yields at least 'k' meters of wood.
+     * * Key Insights:
+     * - Monotonic Search Space: Height settings H range from 0 to max(heights).
+     * Higher H yields less wood; lower H yields more wood.
+     * - Upper-Bound Binary Search: Since we want the MAX valid height setting,
+     * we use a right-biased midpoint: mid = left + (right - left + 1) / 2.
+     * * Time Complexity:  O(N * log(max_height)) where N is the number of trees.
+     * Space Complexity: O(1) auxiliary space.
+     */
+
+
+    @ParameterizedTest
+    @CsvSource({
+            "'2, 6, 3, 8', 7, 3",
+            "'10', 4, 6",
+            "'5, 5, 5, 5', 8, 3",
+            "'1, 10, 3', 1, 9",
+            "'2, 6, 3, 8', 19, 0",
+            "'20, 15, 10, 17', 7, 15"
+    })
+    void testCuttingWood(String heightsStr, int k, int expected) {
+        int[] heights = Arrays.stream(heightsStr.split(","))
+                .map(String::trim)
+                .mapToInt(Integer::parseInt)
+                .toArray();
+        assertEquals(expected, cuttingWood(heights, k));
+    }
+
+    public int cuttingWood(int[] heights, int target) {
+        int left = 0, right = arrayMax(heights);
+        while(left < right) {
+            int mid = left + (right - left + 1) / 2;
+            if (cutWood(heights,mid, target)) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+
+        }
+        return left;
+    }
+
+    public boolean cutWood(int[] heights, int k, int target) {
+        int totalWood = 0;
+        for (int height : heights) {
+            totalWood += Math.max(height - k, 0);
+        }
+        return totalWood >= target;
+    }
+
+    public int arrayMax(int[] ar) {
+        int max = 0;
+        if(ar.length != 0) {
+            max = ar[0];
+            for(int i = 1; i < ar.length; i++) {
+                if (ar[i] > max) {
+                    max = ar[i];
+                }
+            }
+        }
+        return max;
+    }
 }
