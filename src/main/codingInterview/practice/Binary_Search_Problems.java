@@ -336,4 +336,88 @@ public class Binary_Search_Problems extends TestBase {
         }
         return max;
     }
+
+
+    /**
+     * Problem Statement: Find the Target in a Rotated Sorted Array
+     * * Given a rotated sorted array of unique integers (`nums`), return the index of a `target` value.
+     * If the target value is not present, return -1.
+     * * An array is "rotated" if a portion of it was moved from the beginning to the end
+     * (e.g., [1, 2, 3, 4, 5] becomes [3, 4, 5, 1, 2]).
+     * * Expected Time Complexity: O(log n)
+     * Expected Space Complexity: O(1)
+     */
+
+    @ParameterizedTest
+    @CsvSource({
+            // format: "comma-separated-array-elements | target | expected"
+            "'8,9,1,2,3,4,5,6,7', 1, 2",   // Sample case
+            "'4,5,6,7,0,1,2',     4, 0",   // Target at left boundary
+            "'4,5,6,7,0,1,2',     2, 6",   // Target at right boundary
+            "'5,1,2,3,4',         1, 1",   // Target at inflection point
+            "'5,1,2,3,4',         5, 0",   // Target before inflection point
+            "'4,5,6,7,0,1,2',     3, -1",  // Target not present
+            "'1,2,3,4,5',         3, 2",   // Non-rotated array (target present)
+            "'1,2,3,4,5',         6, -1",  // Non-rotated array (target absent)
+            "'3,1',               1, 1",   // Two elements (rotated)
+            "'3,1',               3, 0",   // Two elements (rotated)
+            "'1',                 1, 0",   // Single element (present)
+            "'1',                 0, -1"   // Single element (absent)
+    })
+    void testFindTargetInRotatedSortedArray(String numsStr, int target, int expected) {
+        int[] nums = numsStr == null || numsStr.trim().isEmpty()
+                ? new int[0]
+                : java.util.Arrays.stream(numsStr.split(",")).mapToInt(Integer::parseInt).toArray();
+
+        assertEquals(expected, findTheTargetInARotatedSortedArray(nums, target));
+    }
+
+    public int findTheTargetInARotatedSortedArray(int[] nums, int target) {
+        // Edge case: handle empty arrays safely
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+
+        int left = 0, right = nums.length - 1;
+
+        // Standard binary search loop structure
+        while (left < right) {
+            // Prevent potential integer overflow compared to (left + right) / 2
+            int mid = left + (right - left) / 2;
+
+            // Step 1: Immediate victory condition check
+            if (nums[mid] == target) {
+                return mid;
+            }
+
+            // Step 2: Identify which half of the array is strictly sorted.
+            // A rotated sorted array split in half will ALWAYS yield at least one sorted side.
+            if (nums[left] <= nums[mid]) {
+                // CASE 1: The left subarray [left : mid] is monotonically increasing (sorted).
+
+                // Step 3a: Check if the target realistically fits inside this sorted region boundary.
+                // Note: target <= nums[mid] works perfectly because nums[mid] == target was ruled out above.
+                if (nums[left] <= target && target < nums[mid]) {
+                    right = mid - 1; // Discard right half, target is in the left sorted range.
+                } else {
+                    left = mid + 1;  // Discard left half, target must be in the right un-sorted range.
+                }
+
+            } else {
+                // CASE 2: The right subarray [mid : right] must be the sorted portion.
+
+                // Step 3b: Check if the target realistically fits inside this right sorted region boundary.
+                // Note: nums[mid] < target because mid was already explicitly ruled out as the target match.
+                if (nums[mid] < target && target <= nums[right]) {
+                    left = mid + 1;  // Discard left half, target is in the right sorted range.
+                } else {
+                    right = mid - 1; // Discard right half, target must be in the left un-sorted range.
+                }
+            }
+        }
+
+        // Step 4: Post-processing check. When left == right, we verify if the single remaining
+        // element is the actual target we were tracking down.
+        return nums[left] == target ? left : -1;
+    }
 }
