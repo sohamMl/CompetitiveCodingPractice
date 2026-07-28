@@ -11,6 +11,7 @@ Based on the problem description provided below, generate a JUnit 5 @Parameteriz
     Helper Methods: Do not include any solution helper methods.
 
     Do not provide explanations, code walkthroughs, or the actual solution. Just output the clean Java code block containing the two methods.
+    Try to use csvsource if possible.
 
 Here is the problem:
 [PASTE YOUR PROBLEM DESCRIPTION OR URL HERE]

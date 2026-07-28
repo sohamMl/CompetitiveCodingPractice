@@ -6,8 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Binary_Search_Problems extends TestBase {
 
@@ -519,5 +518,74 @@ public class Binary_Search_Problems extends TestBase {
 
         // Target not found within the matrix
         return false;
+    }
+
+    /**
+     * Problem: Local Maxima in Array
+     * * A local maxima is a value strictly greater than both its immediate neighbors.
+     * Return any local maxima index in an array.
+     * You may assume that an element is always strictly greater than a neighbor that is outside the array.
+     * * Constraints:
+     * - No two adjacent elements in the array are equal.
+     * - Time Complexity Target: O(log N)
+     * - Space Complexity Target: O(1)
+     */
+    @ParameterizedTest
+    @CsvSource({
+            // format: "space-separated-nums | expected-index"
+            "'1 4 3 2 3', 1", // Sample example (index 4 is also valid)
+            "'5 4 3 2 1', 0", // Peak at the start edge
+            "'1 2 3 4 5', 4", // Peak at the end edge
+            "'1', 0",         // Single element array
+            "'1 2', 1",       // Two elements, ascending
+            "'2 1', 0",       // Two elements, descending
+            "'1 3 2 4 3', 1"  // Multiple peaks (indices 1 and 3 are valid)
+    })
+    void testLocalMaximaInArray(String numsStr, int expectedPlaceholder) {
+        int[] nums = Arrays.stream(numsStr.split(" "))
+                .mapToInt(Integer::parseInt)
+                .toArray();
+
+        int actualIndex = findLocalMaxima(nums);
+
+        assertTrue(actualIndex >= 0 && actualIndex < nums.length, "Index out of bounds");
+
+        if (actualIndex == 0) {
+            if (nums.length > 1) {
+                assertTrue(nums[0] > nums[1], "Index 0 is not a local maxima");
+            }
+        } else if (actualIndex == nums.length - 1) {
+            if (nums.length > 1) {
+                assertTrue(nums[nums.length - 1] > nums[nums.length - 2], "Last index is not a local maxima");
+            }
+        } else {
+            assertTrue(nums[actualIndex] > nums[actualIndex - 1], "Not greater than left neighbor");
+            assertTrue(nums[actualIndex] > nums[actualIndex + 1], "Not greater than right neighbor");
+        }
+    }
+
+    public int findLocalMaxima(int[] nums) {
+        // Define search space across the full array bounds
+        int left = 0, right = nums.length - 1;
+
+        // Continue narrowing down until the boundaries converge on a single element
+        while (left < right) {
+            // Prevent integer overflow when calculating midpoint
+            int mid = left + (right - left) / 2;
+
+            // Compare mid with its right neighbor to determine slope direction:
+            if (nums[mid] > nums[mid + 1]) {
+                // Descending slope: Peak exists at 'mid' or somewhere to the left.
+                // Keep 'mid' in the search space since it could be the peak itself.
+                right = mid;
+            } else {
+                // Ascending slope (nums[mid] < nums[mid + 1]): Peak exists strictly to the right.
+                // Exclude 'mid' because nums[mid + 1] is already strictly greater than it.
+                left = mid + 1;
+            }
+        }
+
+        // 'left' and 'right' converge at the same index, pointing to a valid local maxima
+        return left;
     }
 }
