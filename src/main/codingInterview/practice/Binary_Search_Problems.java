@@ -588,4 +588,106 @@ public class Binary_Search_Problems extends TestBase {
         // 'left' and 'right' converge at the same index, pointing to a valid local maxima
         return left;
     }
+
+
+
+    /**
+     * Problem: Find the Median of Two Sorted Arrays
+     * * Given two sorted integer arrays `nums1` and `nums2` of size `m` and `n` respectively,
+     * return the median of the two sorted arrays.
+     * * The overall run time complexity should be O(log (m+n)) or O(log (min(m, n))).
+     * * Example 1:
+     * Input: nums1 = [0, 2, 5, 6, 8], nums2 = [1, 3, 7]
+     * Output: 4.0
+     * Explanation: Merged array = [0, 1, 2, 3, 5, 6, 7, 8], median is (3 + 5) / 2 = 4.0
+     * * Example 2:
+     * Input: nums1 = [0, 2, 5, 6, 8], nums2 = [1, 3, 7, 9]
+     * Output: 5.0
+     * Explanation: Merged array = [0, 1, 2, 3, 5, 6, 7, 8, 9], median is 5.0
+     * * Constraints:
+     * - nums1.length == m
+     * - nums2.length == n
+     * - 0 <= m <= 1000
+     * - 0 <= n <= 1000
+     * - 1 <= m + n <= 2000
+     * - -10^6 <= nums1[i], nums2[i] <= 10^6
+     */
+    @ParameterizedTest
+    @CsvSource(value = {
+            "'0,2,5,6,8' | '1,3,7' | 4.0",
+            "'0,2,5,6,8' | '1,3,7,9' | 5.0",
+            "'' | '1,2,3' | 2.0",
+            "'1,2,3,4' | '' | 2.5",
+            "'2' | '1' | 1.5",
+            "'1,2' | '3,4' | 2.5",
+            "'1,1,1' | '1,1,1' | 1.0"
+    }, delimiter = '|')
+    void testFindMedianSortedArrays(String s1, String s2, double expected) {
+        int[] nums1 = (s1 == null || s1.trim().isEmpty()) ? new int[0] : Arrays.stream(s1.split(",")).mapToInt(Integer::parseInt).toArray();
+        int[] nums2 = (s2 == null || s2.trim().isEmpty()) ? new int[0] : Arrays.stream(s2.split(",")).mapToInt(Integer::parseInt).toArray();
+
+        assertEquals(expected, findMedianSortedArrays(nums1, nums2), 1e-5);
+    }
+
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums1 == null || nums2 == null) return 0.0;
+
+        // Optimization: Ensure nums1 is the smaller array to minimize the binary search range O(log(min(m, n)))
+        if (nums1.length > nums2.length) {
+            int[] temp = nums1;
+            nums1 = nums2;
+            nums2 = temp;
+        }
+
+        int len_n1 = nums1.length;
+        int len_n2 = nums2.length;
+        int totalLen = len_n1 + len_n2;
+        int halfTotalLen = totalLen / 2;
+
+        // Search space represents the COUNT of elements taken from nums1 into the left partition.
+        // Range: [0, len_n1] (0 elements up to all elements of nums1)
+        int leftCount = 0;
+        int rightCount = len_n1;
+
+        while (leftCount <= rightCount) {
+            // Step 1: Calculate element counts for left partitions of both arrays
+            int count1 = leftCount + (rightCount - leftCount) / 2; // Elements taken from nums1
+            int count2 = halfTotalLen - count1;                    // Remaining elements taken from nums2
+
+            // Step 2: Determine partition boundary values based on element counts
+
+            // Left boundary values (last element in left partition, index = count - 1)
+            int n1_left_part = (count1 == 0) ? Integer.MIN_VALUE : nums1[count1 - 1];
+            int n2_left_part = (count2 == 0) ? Integer.MIN_VALUE : nums2[count2 - 1];
+
+            // Right boundary values (first element in right partition, index = count)
+            int n1_right_part = (count1 == len_n1) ? Integer.MAX_VALUE : nums1[count1];
+            int n2_right_part = (count2 == len_n2) ? Integer.MAX_VALUE : nums2[count2];
+
+            // Step 3: Validate partition conditions
+
+            if (n1_left_part > n2_right_part) {
+                // Picked too many elements from nums1 -> Decrease search count
+                rightCount = count1 - 1;
+            } else if (n2_left_part > n1_right_part) {
+                // Picked too few elements from nums1 -> Increase search count
+                leftCount = count1 + 1;
+            } else {
+                // Step 4: Valid partition found -> Compute Median
+                if (totalLen % 2 == 0) {
+                    int maxOfLeft = Math.max(n1_left_part, n2_left_part);
+                    int minOfRight = Math.min(n1_right_part, n2_right_part);
+                    return (maxOfLeft + minOfRight) / 2.0;
+                } else {
+                    return Math.min(n1_right_part, n2_right_part);
+                }
+            }
+        }
+
+        return 0.0;
+    }
+
+
+
+
 }
