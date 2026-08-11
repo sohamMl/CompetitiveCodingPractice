@@ -149,4 +149,47 @@ public class Stack_Problems extends TestBase {
         }
         return arr;
     }
+
+
+    /**
+     * Problem Statement: Repeated Removal of Adjacent Duplicates
+     * * Given a string, continually perform the operation of removing a pair of adjacent duplicate
+     * characters until the string no longer contains any adjacent duplicates. Return the final string.
+     * * Examples:
+     * - Input: s = "aacabba" -> Output: "c"
+     * - Input: s = "aaa"     -> Output: "a"
+     * * Constraints:
+     * - 0 <= s.length <= 10^5
+     * - s consists of lowercase English letters.
+     */
+
+    @ParameterizedTest
+    @CsvSource({
+            "'aacabba', 'c'",
+            "'aaa', 'a'",
+            "'', ''",
+            "'a', 'a'",
+            "'aa', ''",
+            "'abba', ''",
+            "'abcde', 'abcde'",
+            "'azxxzy', 'ay'",
+            "'aaaaa', 'a'",
+            "'aaaaaa', ''"
+    })
+    void testRepeatedRemovalOfAdjacentDuplicates(String input, String expected) {
+        String actual = repeatedRemovalOfAdjacentDuplicates(input);
+        assertEquals(expected, actual);
+    }
+
+    public String repeatedRemovalOfAdjacentDuplicates(String s) {
+        Stack<Character> stack = new Stack<>();
+        for(char c: s.toCharArray()) {
+            if(!stack.isEmpty() && stack.peek() == c) stack.pop();
+            else stack.push(c);
+        }
+
+        StringBuilder result = new StringBuilder();
+        stack.forEach(result::append);
+        return result.toString();
+    }
 }
