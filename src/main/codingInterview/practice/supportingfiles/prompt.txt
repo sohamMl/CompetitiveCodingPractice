@@ -4,14 +4,15 @@ Based on the provided context/text, generate a complete practice setup following
 
 1. Problem Statement Comment: Include a concise, clean Javadoc/multiline comment at the top summarizing the problem statement, rules, examples, and constraints.
 
-2. Test Method (Parameterized): Create a JUnit 5 @ParameterizedTest method.
-   - Use @CsvSource by default for simple types (Strings, primitives, Booleans). Only fall back to @MethodSource if inputs are complex objects or multi-dimensional arrays.
-   - Include diverse test cases: sample examples from the text, basic valid/invalid cases, edge cases (empty strings/nulls, boundary sizes, unbalanced inputs), and deeply nested structures.
+2. Test Method (@ParameterizedTest with @CsvSource):
+   - ALWAYS use @CsvSource for test data inputs and expected results. Format array or list inputs as comma-separated strings inside single quotes (e.g., "'5,2,4,6,1' | '6,4,6,-1,-1'").
+   - DO NOT use @MethodSource, Stream<Arguments>, or Arguments.of() under any circumstances.
+   - Include diverse test cases: sample examples from the text, basic valid/invalid cases, edge cases (empty elements/nulls, single elements, boundaries), duplicate values, and negative numbers.
 
-3. Logic Method: Create the companion method containing the signature to implement (e.g., `public boolean solve(...)`). Leave the method body completely blank or returning a default dummy value (`false`, `0`, `null`) so the code compiles.
+3. Companion/Stub Method Location: Place the empty or dummy-returning companion method (e.g., `public int[] solve(...)`) at the very END of the snippet, AFTER the test method.
 
-4. Constraints & Formatting:
-   - Output ONLY Java code.
+4. Formatting & Output Rules:
+   - Output ONLY Java code inside a single markdown code block.
    - Do NOT include outer class declarations, package statements, or imports.
-   - Do NOT include helper methods or actual solution implementations.
-   - Do NOT provide code walkthroughs, explanations, or text outside the code block.
+   - Do NOT include helper methods or actual algorithm solutions.
+   - Do NOT provide code walkthroughs, explanations, or any conversational text outside the code block.
