@@ -347,4 +347,82 @@ public class Stack_Problems extends TestBase {
         }
         return result;
     }
+
+
+
+    /**
+     * Problem: Evaluate Expression
+     * * Given a string representing a mathematical expression containing integers,
+     * parentheses '(', ')', addition '+', and subtraction '-' operators, evaluate
+     * and return the result of the expression.
+     * * Rules:
+     * - Calculate nested expressions inside parentheses first.
+     * - Treat subtraction as adding a negative number.
+     * - Process multi-digit numbers digit-by-digit.
+     * * Examples:
+     * - Input: s = "18-(7+(2-4))" -> Output: 13
+     * - Input: s = "1+1"          -> Output: 2
+     * - Input: s = "(1+(4+5+2)-3)+(6+8)" -> Output: 23
+     * * Constraints:
+     * - String represents a valid mathematical expression.
+     * - Contains non-negative integers, '+', '-', '(', and ')'.
+     */
+
+    @ParameterizedTest
+    @CsvSource({
+            "'18-(7+(2-4))', 13",
+            "'1+1', 2",
+            "'2-1+2', 3",
+            "'(1+(4+5+2)-3)+(6+8)', 23",
+            "'0', 0",
+            "'100', 100",
+            "'1-(2-3)', 2",
+            "'(3-(2-1))', 2",
+            "'10+(20-5)-(10+5)', 10"
+    })
+    void testEvaluateExpression(String expression, int expected) {
+        assertEquals(expected, evaluateExpression(expression));
+    }
+
+    public int evaluateExpression(String s) {
+        Stack<Integer> stack = new Stack<>();
+        int currNum = 0, sign = 1, res = 0;
+        for (char c : s.toCharArray()) {
+            if (Character.isDigit(c)) {
+                currNum = currNum * 10 + (c - '0');
+            }
+            // If the current character is an operator, add 'currNum' to the result
+            // after multiplying it by its sign.
+            else if (c == '+' || c == '-') {
+                res += currNum * sign;
+                // Update the sign and reset 'currNum'.
+                sign = (c == '-') ? -1 : 1;
+                currNum = 0;
+            }
+            // If the current character is an opening parenthesis, a new nested expression
+            // is starting.
+            else if (c == '(') {
+                // Save the current 'res' and 'sign' values by pushing them onto
+                // the stack, then reset their values to start calculating the new nested
+                // expression.
+                stack.push(res);
+                stack.push(sign);
+                res = 0;
+                sign = 1;
+            }
+            // If the current character is a closing parenthesis, a nested expression has
+            // ended.
+            else if (c == ')') {
+                // Finalize the result of the current nested expression.
+                res += sign * currNum;
+                // Apply the sign of the current nested expression’s result before adding
+                // this result to the result of the outer expression.
+                res *= stack.pop();
+                res += stack.pop();
+                currNum = 0;
+            }
+        }
+        // Finalize the result of the overall expression.
+        return res + currNum * sign;
+    }
 }
