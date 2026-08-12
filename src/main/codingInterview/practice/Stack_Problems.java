@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Stack_Problems extends TestBase {
@@ -130,7 +131,7 @@ public class Stack_Problems extends TestBase {
 
         int[] actual = nextLargestNumberToTheRight(nums);
 
-        Assertions.assertArrayEquals(expected, actual);
+        assertArrayEquals(expected, actual);
     }
 
     public int[] nextLargestNumberToTheRight(int[] nums) {
@@ -266,5 +267,84 @@ public class Stack_Problems extends TestBase {
             populateOutStackIfEmpty();
             return outStack.peek();
         }
+    }
+
+
+
+
+    /**
+     * Problem: Maximums of Sliding Window
+     *
+     * Description:
+     * Given an array of integers 'nums' and a sliding window size 'k', create an array
+     * recording the maximum value in each window as it slides from left to right.
+     *
+     * Example:
+     * Input: nums = [3, 2, 4, 1, 2, 1, 1], k = 4
+     * Output: [4, 4, 4, 2]
+     *
+     * Constraints:
+     * - 1 <= nums.length <= 10^5
+     * - -10^4 <= nums[i] <= 10^4
+     * - 1 <= k <= nums.length
+     */
+
+    @ParameterizedTest
+    @CsvSource(value = {
+            "'3,2,4,1,2,1,1' | 4 | '4,4,4,2'",
+            "'1,3,-1,-3,5,3,6,7' | 3 | '3,3,5,5,6,7'",
+            "'1' | 1 | '1'",
+            "'1,-1' | 1 | '1,-1'",
+            "'9,11' | 2 | '11'",
+            "'4,4,4,4' | 2 | '4,4,4'",
+            "'-7,-8,-7,5,7,1,6,0' | 4 | '5,7,7,7,7'",
+            "'-1,-2,-3,-4' | 2 | '-1,-2,-3'"
+    }, delimiter = '|')
+    void testMaximumsOfSlidingWindow(String numsInput, int k, String expectedInput) {
+        int[] nums = Arrays.stream(numsInput.split(","))
+                .map(String::trim)
+                .mapToInt(Integer::parseInt)
+                .toArray();
+
+        int[] expected = Arrays.stream(expectedInput.split(","))
+                .map(String::trim)
+                .mapToInt(Integer::parseInt)
+                .toArray();
+
+        int[] actual = maxSlidingWindow(nums, k);
+
+        assertArrayEquals(expected, actual);
+    }
+
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        Deque<int []> dq = new ArrayDeque<>();
+        if (nums.length < k) return new int[0];
+        int[] result = new int[nums.length - k + 1];
+        int left=0, right=0;
+
+        while (right < nums.length) {
+            //grow the window till window length is reached
+            while(!dq.isEmpty() && dq.peekLast()[0]<= nums[right]) {
+                dq.removeLast();
+            }
+
+            //add the new element
+            dq.addLast(new int[]{nums[right], right});
+
+            //slide the window
+            if (right-left+1 == k) {
+                //remove the outdated element - the first element will be the left most
+                //we need to see if it is currently under the window
+                if(!dq.isEmpty() && dq.peekFirst()[1] < left) {
+                    dq.removeFirst();
+                }
+
+                //add the first element to the result
+                result[left] = dq.peekFirst()[0];
+                left++;
+            }
+            right++;
+        }
+        return result;
     }
 }
