@@ -5,10 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -191,5 +188,83 @@ public class Stack_Problems extends TestBase {
         StringBuilder result = new StringBuilder();
         stack.forEach(result::append);
         return result.toString();
+    }
+
+
+
+    /**
+     * Problem: Implement a Queue using Stacks
+     * * Implement a first-in-first-out (FIFO) queue using only two stacks.
+     * The implemented queue should support the following operations:
+     * - enqueue(x): Adds element x to the back of the queue.
+     * - dequeue(): Removes and returns the element from the front of the queue.
+     * - peek(): Returns the element at the front of the queue without removing it.
+     * * Operations Sequence Example:
+     * Input: enqueue(1), enqueue(2), dequeue(), enqueue(3), peek()
+     * Output: dequeue() -> 1, peek() -> 2
+     * * Constraints:
+     * - dequeue and peek operations will only be called on a non-empty queue.
+     * - Elements are integers (supports negative numbers, zero, and positive values).
+     */
+
+    @ParameterizedTest
+    @CsvSource({
+            "'enqueue:1,enqueue:2,dequeue,enqueue:3,peek', '1,2'",
+            "'enqueue:10,peek,dequeue', '10,10'",
+            "'enqueue:1,enqueue:2,enqueue:3,dequeue,dequeue,dequeue', '1,2,3'",
+            "'enqueue:-5,enqueue:0,enqueue:5,peek,dequeue,peek', '-5,-5,0'",
+            "'enqueue:42,dequeue', '42'",
+            "'enqueue:1,enqueue:2,dequeue,enqueue:3,dequeue,dequeue', '1,2,3'",
+            "'enqueue:100,enqueue:-100,peek,dequeue,peek,dequeue', '100,100,-100,-100'"
+    })
+    void testQueueUsingStacks(String operationsStr, String expectedStr) {
+        MyQueue queue = new MyQueue();
+        String[] operations = operationsStr.split(",");
+        String[] expectedValues = expectedStr.split(",");
+        int expectedIndex = 0;
+
+        for (String op : operations) {
+            String[] tokens = op.trim().split(":");
+            String command = tokens[0];
+
+            if ("enqueue".equals(command)) {
+                int val = Integer.parseInt(tokens[1]);
+                queue.enqueue(val);
+            } else if ("dequeue".equals(command)) {
+                int expected = Integer.parseInt(expectedValues[expectedIndex++].trim());
+                Assertions.assertEquals(expected, queue.dequeue());
+            } else if ("peek".equals(command)) {
+                int expected = Integer.parseInt(expectedValues[expectedIndex++].trim());
+                Assertions.assertEquals(expected, queue.peek());
+            }
+        }
+    }
+
+    class MyQueue {
+        private final Stack<Integer> inStack = new Stack<>();
+        private final Stack<Integer> outStack = new Stack<>();
+
+
+        public void enqueue(int x) {
+            inStack.push(x);
+        }
+
+        private void populateOutStackIfEmpty() {
+            if (outStack.isEmpty()) {
+                while (!inStack.isEmpty()) {
+                    outStack.push(inStack.pop());
+                }
+            }
+        }
+
+        public int dequeue() {
+            populateOutStackIfEmpty();
+            return outStack.pop();
+        }
+
+        public int peek() {
+            populateOutStackIfEmpty();
+            return outStack.peek();
+        }
     }
 }
